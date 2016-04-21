@@ -46,7 +46,16 @@ object FieldExtractors {
   }
 
   implicit val stringConverter = new Read[String] {
-    override def read(s: String): ValidatedNel[String, String] = Valid(s)
+    @scala.annotation.tailrec
+    def trimQuotes(s: String): String = {
+      s match {
+        case _ if s.startsWith("\"") => trimQuotes(s.drop(1))
+        case _ if s.endsWith("\"") => trimQuotes(s.dropRight(1))
+        case _ => s
+      }
+    }
+
+    override def read(s: String): ValidatedNel[String, String] = Valid(trimQuotes(s))
   }
 
   implicit val bigDecimalConverter = new Read[BigDecimal] {

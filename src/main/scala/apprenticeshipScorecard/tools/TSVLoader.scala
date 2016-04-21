@@ -15,10 +15,14 @@ case class DataStore(
 
 object TSVLoader {
 
-  def main(args: Array[String]): Unit = {
-    val fileName = "data/Scorecard_Analysis_Data_For_Site_v4_fictional.tsv"
+  val fileName = "data/Scorecard_Analysis_Data_For_Site_v4_fictional.tsv"
 
-    val data = loadFromSource(Source.fromFile(fileName))
+  lazy val dataStore: DataStore = {
+    loadFromSource(Source.fromFile(fileName))
+  }
+
+  def main(args: Array[String]): Unit = {
+    val data = dataStore
 
     println(s"Successfully loaded ${data.providers.keys.size} providers and ${data.apprenticeships.length} apprenticeships")
 
