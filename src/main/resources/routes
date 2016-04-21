@@ -1,3 +1,4 @@
 
 
-GET        /providers        apprenticeshipScorecard.controllers.ApiController.providers
+GET        /providers              apprenticeshipScorecard.controllers.ApiController.providers
+GET        /apprenticeships        apprenticeshipScorecard.controllers.ApiController.apprenticeships

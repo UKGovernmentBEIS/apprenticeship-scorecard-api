@@ -14,4 +14,8 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
     Ok(Json.toJson(TSVLoader.dataStore.providers.values))
   }
 
+  def apprenticeships = Action {
+    Ok(Json.toJson(TSVLoader.dataStore.apprenticeships))
+  }
+
 }
