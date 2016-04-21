@@ -14,11 +14,16 @@ object FieldExtractors {
     def read(s: String): ValidatedNel[String, T]
   }
 
+  import cats.std.list._
+
   def mandatory[T: Read](fieldName: String)(implicit fields: Map[String, String]): ValidatedNel[String, T] = {
     fields.get(fieldName) match {
       case None => Invalid(NonEmptyList(s"no field found with name $fieldName"))
       case Some(s) if s.trim() == "" => Invalid(NonEmptyList(s"mandatory field $fieldName is blank"))
-      case Some(s) => implicitly[Read[T]].read(s)
+      case Some(s) => implicitly[Read[T]].read(s).leftMap { es =>
+        val updatedErrs = es.unwrap.map(e => s"field name: $fieldName - $e")
+        NonEmptyList.fromList(updatedErrs).get
+      }
     }
   }
 
@@ -26,7 +31,10 @@ object FieldExtractors {
     fields.get(fieldName) match {
       case None => Invalid(NonEmptyList(s"no field found with name $fieldName"))
       case Some(s) if s.trim() == "" => Valid(None)
-      case Some(s) => implicitly[Read[T]].read(s).map(Some(_))
+      case Some(s) => implicitly[Read[T]].read(s).leftMap { es =>
+        val updatedErrs = es.unwrap.map(e => s"field name: $fieldName - $e")
+        NonEmptyList.fromList(updatedErrs).get
+      }.map(Some(_))
     }
   }
 

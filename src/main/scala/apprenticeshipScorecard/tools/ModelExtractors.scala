@@ -31,12 +31,12 @@ object LearnerExtractor extends Extractor[Learner] {
   val learnersTotalFieldName = "learners_total"
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Learner] = {
-    val s = mandatory[BigDecimal](lssFieldName)
-    val ns = mandatory[BigDecimal](lssaFieldName)
-    val u19 = mandatory[Int](ageU19FieldName)
-    val u24 = mandatory[Int](age19to24FieldName)
-    val plus = mandatory[Int](age25plusFieldName)
-    val total = mandatory[Int](learnersTotalFieldName)
+    val s = optional[BigDecimal](lssFieldName).default(None)
+    val ns = optional[BigDecimal](lssaFieldName).default(None)
+    val u19 = optional[Int](ageU19FieldName).default(None)
+    val u24 = optional[Int](age19to24FieldName).default(None)
+    val plus = optional[Int](age25plusFieldName).default(None)
+    val total = optional[Int](learnersTotalFieldName).default(None)
 
     (s |@| ns |@| u19 |@| u24 |@| plus |@| total).map(Learner.apply)
   }
@@ -51,8 +51,8 @@ case class EarningsExtractor(national: Boolean = false) extends Extractor[Earnin
   val above21KFieldName = "proportion_earned_above_21k" + suffix
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Earnings] = {
-    val m = mandatory[BigDecimal](medianFieldName)
-    val above = mandatory[BigDecimal](above21KFieldName)
+    val m = optional[BigDecimal](medianFieldName)
+    val above = optional[BigDecimal](above21KFieldName)
 
     (m |@| above).map(Earnings.apply)
   }
@@ -69,9 +69,9 @@ case class QualificationStatsExtractor(national: Boolean = false) extends Extrac
   val achievementRateFieldName = "qual_achievement_rate" + suffix
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, QualificationStats] = {
-    val sr = mandatory[BigDecimal](successRateFieldName)
-    val rr = mandatory[BigDecimal](retentionRateFieldName)
-    val ar = mandatory[BigDecimal](achievementRateFieldName)
+    val sr = optional[BigDecimal](successRateFieldName).default(None)
+    val rr = optional[BigDecimal](retentionRateFieldName).default(None)
+    val ar = optional[BigDecimal](achievementRateFieldName).default(None)
 
     (sr |@| rr |@| ar).map(QualificationStats.apply)
   }
@@ -124,5 +124,40 @@ object ProviderExtractor extends Extractor[Provider] {
     val web = optional[String](websiteFieldName)
 
     (ukprn |@| name |@| typ |@| region |@| lea |@| la |@| address |@| web).map(Provider.apply)
+  }
+}
+
+object ApprenticeshipExtractor extends Extractor[Apprenticeship] {
+
+  import FieldExtractors._
+
+  val codeFieldName = "ssa_tier2_code"
+  val titleFieldName = "ssa_tier2_description"
+  val descriptionFieldName = "ssa_tier2_description"
+  val costFieldName = "average_cost"
+
+  override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Apprenticeship] = {
+    val ukprn = UKPRNExtractor.extract
+    val code = mandatory[String](codeFieldName)
+    val title = mandatory[String](titleFieldName)
+    val learner = LearnerExtractor.extract
+    val desc = mandatory[String](descriptionFieldName)
+    val stats = new QualificationStatsExtractor(false).extract
+    val natStats = new QualificationStatsExtractor(true).extract
+    val earnings = new EarningsExtractor(false).extract
+    val natEarn = new EarningsExtractor(true).extract
+    val cost = mandatory[BigDecimal](costFieldName)
+
+    (code |@| title |@| learner |@| desc |@| ukprn |@| stats |@| natStats |@| earnings |@| natEarn |@| cost).map(Apprenticeship.apply)
+
+  }
+}
+
+object RecordExtractor extends Extractor[(Provider, Apprenticeship)] {
+
+  import FieldExtractors._
+
+  override def extract(implicit fields: Map[String, String]): ValidatedNel[String, (Provider, Apprenticeship)] = {
+    (ProviderExtractor.extract |@| ApprenticeshipExtractor.extract).tupled
   }
 }

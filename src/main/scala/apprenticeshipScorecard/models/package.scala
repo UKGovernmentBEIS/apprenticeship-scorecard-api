@@ -5,16 +5,16 @@ package object models {
   case class UKPRN(id: Long) extends AnyVal
 
   case class Learner(
-                      satisfaction: BigDecimal,
-                      nationalSatisfaction: BigDecimal,
-                      ageUnder19: Int,
-                      age19to24: Int,
-                      age25plus: Int,
-                      total: Int)
+                      satisfaction: Option[BigDecimal],
+                      nationalSatisfaction: Option[BigDecimal],
+                      ageUnder19: Option[Int],
+                      age19to24: Option[Int],
+                      age25plus: Option[Int],
+                      total: Option[Int])
 
-  case class Earnings(median: BigDecimal, proportionAbove21k: BigDecimal)
+  case class Earnings(median: Option[BigDecimal], proportionAbove21k: Option[BigDecimal])
 
-  case class QualificationStats(successRate: BigDecimal, retentionRate: BigDecimal, achievementRate: BigDecimal)
+  case class QualificationStats(successRate: Option[BigDecimal], retentionRate: Option[BigDecimal], achievementRate: Option[BigDecimal])
 
   case class Address(
                       address1: Option[String],
@@ -41,7 +41,7 @@ package object models {
                              subjectTier2Title: String,
                              learner: Learner,
                              description: String,
-                             provider: Provider,
+                             providerId: UKPRN,
                              stats: QualificationStats,
                              nationalStats: QualificationStats,
                              earnings: Earnings,
