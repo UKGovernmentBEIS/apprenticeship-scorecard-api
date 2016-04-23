@@ -1,4 +1,4 @@
 
 
-GET        /providers              apprenticeshipScorecard.controllers.ApiController.providers(limit :Option[Int])
+GET        /providers              apprenticeshipScorecard.controllers.ApiController.providers(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int])
 GET        /apprenticeships        apprenticeshipScorecard.controllers.ApiController.apprenticeships

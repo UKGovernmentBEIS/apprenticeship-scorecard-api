@@ -2,19 +2,30 @@ package apprenticeshipScorecard.controllers
 
 import javax.inject.Inject
 
+import apprenticeshipScorecard.models.Provider
 import apprenticeshipScorecard.tools.TSVLoader
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 
 import scala.concurrent.ExecutionContext
 
-class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller {
+case class ProviderResults(results: Seq[Provider], resultCount: Int, pageNumber: Int)
 
-  def providers(limit: Option[Int]) = Action {
-    val json = Json.toJson(TSVLoader.dataStore.providers.values.take(limit.map(_.min(100)).getOrElse(100)))
-    Logger.debug("built json for providers")
-    Ok(json)
+object ProviderResults {
+  implicit val formats = Json.format[ProviderResults]
+}
+
+class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller {
+  implicit val providerFormat = Json.format[Provider]
+
+  def providers(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int]) = Action {
+    val max = max_results.getOrElse(1000)
+
+    val providers = TSVLoader.dataStore.providers.values.toSeq.sortBy(_.name).take(max)
+    val page = ResultsPage.build(providers, PageNumber(page_number.getOrElse(1)), max, PageCount(page_size.getOrElse(50)))
+    val results = ProviderResults(page.resultsForPage, page.resultCount, page.currentPage.num)
+
+    Ok(Json.toJson(results))
   }
 
   def apprenticeships = Action {
