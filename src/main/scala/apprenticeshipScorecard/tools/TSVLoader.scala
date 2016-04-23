@@ -17,9 +17,8 @@ object TSVLoader {
 
   val fileName = "data/Scorecard_Analysis_Data_For_Site_v4_fictional.tsv"
 
-  lazy val dataStore: DataStore = {
-    loadFromSource(Source.fromFile(fileName))
-  }
+  lazy val dataStore: DataStore = loadFromSource(Source.fromFile(fileName))
+
 
   def main(args: Array[String]): Unit = {
     val data = dataStore
@@ -35,7 +34,9 @@ object TSVLoader {
     val lines = source.getLines.toList
     val colNames = lines.head.split("\t").toList
 
-    processData(lines, colNames)
+    val ds = processData(lines, colNames)
+    source.close()
+    ds
   }
 
   def processData(lines: List[String], colNames: List[String]): DataStore = {
