@@ -6,22 +6,22 @@ package object models {
 
   case class Learner(
                       satisfaction: Option[BigDecimal],
-                      nationalSatisfaction: Option[BigDecimal],
-                      ageUnder19: Option[Int],
-                      age19to24: Option[Int],
-                      age25plus: Option[Int],
+                      national_satisfaction: Option[BigDecimal],
+                      age_under_19: Option[Int],
+                      age_19_to_24: Option[Int],
+                      age_25_plus: Option[Int],
                       total: Option[Int])
 
-  case class Earnings(median: Option[BigDecimal], proportionAbove21k: Option[BigDecimal])
+  case class Earnings(median: Option[BigDecimal], proportion_above_21k: Option[BigDecimal])
 
-  case class QualificationStats(successRate: Option[BigDecimal], retentionRate: Option[BigDecimal], achievementRate: Option[BigDecimal])
+  case class QualificationStats(success_rate: Option[BigDecimal], retention_rate: Option[BigDecimal], achievement_rate: Option[BigDecimal])
 
   case class Address(
                       address1: Option[String],
                       address2: Option[String],
                       town: Option[String],
                       county: Option[String],
-                      postcode: Option[String],
+                      post_code: Option[String],
                       latitude: Option[BigDecimal],
                       longitude: Option[BigDecimal]
                     )
@@ -29,7 +29,7 @@ package object models {
   case class Provider(
                        ukprn: UKPRN,
                        name: String,
-                       providerType: String,
+                       provider_type: String,
                        region: String,
                        lea: String,
                        la: String,
@@ -37,15 +37,15 @@ package object models {
                        website: Option[String])
 
   case class Apprenticeship(
-                             subjectTier2Code: String,
-                             subjectTier2Title: String,
+                             subject_tier_2_code: String,
+                             subject_tier_2_title: String,
                              learner: Learner,
                              description: String,
                              providerId: UKPRN,
                              stats: QualificationStats,
-                             nationalStats: QualificationStats,
+                             national_stats: QualificationStats,
                              earnings: Earnings,
-                             nationalEarnings: Earnings,
-                             averageCost: BigDecimal)
+                             national_earnings: Earnings,
+                             average_cost: BigDecimal)
 
 }

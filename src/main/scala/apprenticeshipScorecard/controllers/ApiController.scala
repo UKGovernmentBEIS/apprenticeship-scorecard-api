@@ -9,7 +9,7 @@ import play.api.mvc.{Action, Controller}
 
 import scala.concurrent.ExecutionContext
 
-case class ProviderResults(results: Seq[Provider], resultCount: Int, pageNumber: Int)
+case class ProviderResults(results: Seq[Provider], result_count: Int, page_number: Int)
 
 object ProviderResults {
   implicit val formats = Json.format[ProviderResults]
