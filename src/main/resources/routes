@@ -1,4 +1,4 @@
 
 
-GET        /providers              apprenticeshipScorecard.controllers.ApiController.providers
+GET        /providers              apprenticeshipScorecard.controllers.ApiController.providers(limit :Option[Int])
 GET        /apprenticeships        apprenticeshipScorecard.controllers.ApiController.apprenticeships

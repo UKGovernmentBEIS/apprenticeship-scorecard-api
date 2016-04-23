@@ -11,8 +11,8 @@ import scala.concurrent.ExecutionContext
 
 class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller {
 
-  def providers = Action {
-    val json = Json.toJson(TSVLoader.dataStore.providers.values)
+  def providers(limit: Option[Int]) = Action {
+    val json = Json.toJson(TSVLoader.dataStore.providers.values.take(limit.getOrElse(100)))
     Logger.debug("built json for providers")
     Ok(json)
   }
