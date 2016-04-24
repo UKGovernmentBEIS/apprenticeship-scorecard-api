@@ -19,7 +19,7 @@ object UKPRNExtractor extends Extractor[UKPRN] {
 
 }
 
-object LearnerExtractor extends Extractor[Learner] {
+object LearnerExtractor extends Extractor[LearnerStats] {
 
   import FieldExtractors._
 
@@ -30,7 +30,7 @@ object LearnerExtractor extends Extractor[Learner] {
   val age25plusFieldName = "learners_age_25_plus"
   val learnersTotalFieldName = "learners_total"
 
-  override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Learner] = {
+  override def extract(implicit fields: Map[String, String]): ValidatedNel[String, LearnerStats] = {
     val s = optional[BigDecimal](lssFieldName).default(None)
     val ns = optional[BigDecimal](lssaFieldName).default(None)
     val u19 = optional[Int](ageU19FieldName).default(None)
@@ -38,7 +38,7 @@ object LearnerExtractor extends Extractor[Learner] {
     val plus = optional[Int](age25plusFieldName).default(None)
     val total = optional[Int](learnersTotalFieldName).default(None)
 
-    (s |@| ns |@| u19 |@| u24 |@| plus |@| total).map(Learner.apply)
+    (s |@| ns |@| u19 |@| u24 |@| plus |@| total).map(LearnerStats.apply)
   }
 }
 

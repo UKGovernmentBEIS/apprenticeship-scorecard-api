@@ -11,7 +11,7 @@ package object apprenticeshipScorecard {
   implicit val addressFormats = Json.format[Address]
   implicit val providerFormats = Json.format[Provider]
 
-  implicit val learnerFormats = Json.format[Learner]
+  implicit val learnerFormats = Json.format[LearnerStats]
   implicit val qsFormats = Json.format[QualificationStats]
   implicit val earningsFormats = Json.format[Earnings]
   implicit val apprenticeshipFormats = Json.format[Apprenticeship]

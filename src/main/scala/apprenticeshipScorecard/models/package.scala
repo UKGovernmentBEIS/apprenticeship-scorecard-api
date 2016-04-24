@@ -4,7 +4,7 @@ package object models {
 
   case class UKPRN(id: Long) extends AnyVal
 
-  case class Learner(
+  case class LearnerStats(
                       satisfaction: Option[BigDecimal],
                       national_satisfaction: Option[BigDecimal],
                       age_under_19: Option[Int],
@@ -39,7 +39,7 @@ package object models {
   case class Apprenticeship(
                              subject_tier_2_code: String,
                              subject_tier_2_title: String,
-                             learner: Learner,
+                             learner_stats: LearnerStats,
                              description: String,
                              providerId: UKPRN,
                              stats: QualificationStats,

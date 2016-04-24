@@ -9,8 +9,8 @@ import scala.io.Source
 
 case class DataStore(
                       providers: Map[UKPRN, Provider],
-                      apprenticeships: List[Apprenticeship],
-                      errors: List[(Int, String)]
+                      apprenticeships: Seq[Apprenticeship],
+                      errors: Seq[(Int, String)]
                     )
 
 object TSVLoader {
@@ -24,6 +24,8 @@ object TSVLoader {
     val data = dataStore
 
     println(s"Successfully loaded ${data.providers.keys.size} providers and ${data.apprenticeships.length} apprenticeships")
+
+    println(data.apprenticeships.count(_.learner_stats.satisfaction.isDefined) + " apprenticeships with learner stats")
 
     data.errors.foreach { case (line, e) => println(s"line $line: $e") }
     if (data.errors.nonEmpty) println(s"total errors: ${data.errors.length}")
