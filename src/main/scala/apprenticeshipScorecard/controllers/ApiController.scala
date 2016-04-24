@@ -16,7 +16,10 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
   import Filters._
 
   def providers(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int]) = Action {
-    val providers = filter(TSVLoader.dataStore.providers.values.toSeq)(limitAndSort(max_results, _.name))
+    val providers =
+      TSVLoader.dataStore.providers.values.toSeq
+        .limit(max_results)
+        .sortBy(_.name)
 
     val page = ResultsPage.build(providers, PageNumber(page_number.getOrElse(1)), max_results.getOrElse(Int.MaxValue), PageCount(page_size.getOrElse(50)))
     val results = SearchResults(page.resultsForPage, page.resultCount, page.currentPage.num, page.perPage.count)
@@ -25,7 +28,10 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
   }
 
   def apprenticeships(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int]) = Action {
-    val apprenticeships = filter(TSVLoader.dataStore.apprenticeships)(limitAndSort(max_results, _.description))
+    val apprenticeships =
+      TSVLoader.dataStore.apprenticeships
+        .limit(max_results)
+        .sortBy(_.description)
 
     val page = ResultsPage.build(apprenticeships, PageNumber(page_number.getOrElse(1)), max_results.getOrElse(Int.MaxValue), PageCount(page_size.getOrElse(50)))
     val results = SearchResults(page.resultsForPage, page.resultCount, page.currentPage.num, page.perPage.count)
