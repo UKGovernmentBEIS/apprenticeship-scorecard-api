@@ -13,8 +13,6 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
   implicit val providerFormat = Json.format[Provider]
   implicit val apprenticeshipFormat = Json.format[Apprenticeship]
 
-  import Filters._
-
   def providers(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int]) = Action {
     val providers =
       TSVLoader.dataStore.providers.values.toSeq
