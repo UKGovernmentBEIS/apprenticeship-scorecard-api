@@ -22,6 +22,8 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.191",
   "org.postgresql" % "postgresql" % "9.4.1208",
   "org.typelevel" %% "cats" % "0.4.1",
+  "com.chuusai" %% "shapeless" % "2.3.0",
+  "org.parboiled" %% "parboiled" % "2.1.3",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0-RC1" % Test
 )
 
