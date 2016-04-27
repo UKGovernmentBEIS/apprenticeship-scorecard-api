@@ -79,15 +79,15 @@ class QueryParser$Spec extends FlatSpec with Matchers {
   it should "match a = 3 or b = 2" in {
     conjunction.parseOnly("a = 3 or b = 2") shouldBe Done("", OR(EQ(Path(List("a")), 3), EQ(Path(List("b")), 2)))
   }
-  it should "match (a = 3 and b = 2) or c = 5" in {
-    conjunction.parseOnly("(a = 3 and b = 2) or c = 5") shouldBe Done("", OR(AND(EQ(Path(List("a")), 3), EQ(Path(List("b")), 2)), EQ(Path(List("c")), 5)))
+  it should "match a = 3 and b = 2 or c = 5" in {
+    conjunction.parseOnly("a = 3 and b = 2 or c = 5") shouldBe Done("",AND(EQ(Path(List("a")),3.0),OR(EQ(Path(List("b")),2.0),EQ(Path(List("c")),5.0))))
   }
 
-  "expr" should "match (a = 3)" in {
-    query.parseOnly("(a = 3)") shouldBe Done("", EQ(Path(List("a")), 3.0))
+  "query" should "match a = 3" in {
+    query.parseOnly("a = 3") shouldBe Done("", EQ(Path(List("a")), 3.0))
   }
-  it should "match (a = 3 or b = 2)" in {
-    query.parseOnly("(a = 3 or b = 2)") shouldBe Done("", OR(EQ(Path(List("a")), 3.0), EQ(Path(List("b")), 2.0)))
+  it should "match a = 3 or b = 2" in {
+    query.parseOnly("a = 3 or b = 2") shouldBe Done("", OR(EQ(Path(List("a")), 3.0), EQ(Path(List("b")), 2.0)))
   }
   it should "fail to match" in {
     // Checking that this does not put the parser into an infinite loop
