@@ -96,11 +96,11 @@ object QueryParser extends Whitespace {
     conjunction.t | comparison.t <~ endOfInput
   }.named("query")
 
-  lazy val conjunction: Parser[Conjunction] = delay {
+  lazy val conjunction: Parser[Conjunction] = {
     (comparison.t ~ conj.t ~ conjunction).map { case ((l, c), r) => c.make(l, r) } |
       (comparison.t ~ conj.t ~ comparison).map { case ((l, c), r) => c.make(l, r) } |
       (parens(conjunction).t ~ conj.t ~ comparison).map { case ((l, c), r) => c.make(l, r) } |
-      (comparison.t ~ conj.t ~ parens(conjunction)).map { case ((l, c), r) => c.make(l, r) }|
+      (comparison.t ~ conj.t ~ parens(conjunction)).map { case ((l, c), r) => c.make(l, r) } |
       (parens(conjunction).t ~ conj.t ~ parens(conjunction)).map { case ((l, c), r) => c.make(l, r) }
   }.named("conjunction")
 

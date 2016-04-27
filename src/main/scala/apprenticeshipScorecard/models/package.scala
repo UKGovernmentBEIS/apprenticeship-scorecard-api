@@ -41,7 +41,7 @@ package object models {
                              subject_tier_2_title: String,
                              learner_stats: LearnerStats,
                              description: String,
-                             providerId: UKPRN,
+                             provider_id: UKPRN,
                              stats: QualificationStats,
                              national_stats: QualificationStats,
                              earnings: Earnings,
