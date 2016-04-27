@@ -1,4 +1,4 @@
-package queries
+package apprenticeshipScorecard.queries
 
 import org.scalatest.{FlatSpec, Matchers}
 import play.api.libs.json._

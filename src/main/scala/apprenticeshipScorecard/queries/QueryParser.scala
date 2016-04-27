@@ -1,4 +1,4 @@
-package queries
+package apprenticeshipScorecard.queries
 
 import atto.Atto._
 import atto.ParseResult._
@@ -75,6 +75,7 @@ object QueryAST {
   }
 
   object Conj {
+
     case object and extends Conj {
       override def make(left: Query, right: Query): Conjunction = AND(left, right)
     }
@@ -82,7 +83,9 @@ object QueryAST {
     case object or extends Conj {
       override def make(left: Query, right: Query): Conjunction = OR(left, right)
     }
+
   }
+
 }
 
 object QueryParser extends Whitespace {
@@ -94,6 +97,21 @@ object QueryParser extends Whitespace {
       comparison |
       parens(conjunction) |
       conjunction
+  }.named("query")
+
+  lazy val conjunction: Parser[Conjunction] = delay {
+    (query.t ~ conj.t ~ query.t).map { case ((l, c), r) => c.make(l, r) }
+  }.named("conjunction")
+
+  lazy val conj: Parser[Conj] = delay {
+    and | or
+  }
+
+  lazy val and = delay {
+    string("and") >| Conj.and
+  }
+  lazy val or = delay {
+    string("or") >| Conj.or
   }
 
   lazy val identifier: Parser[String] = delay {
@@ -117,7 +135,7 @@ object QueryParser extends Whitespace {
       pairByT(path, string("starts-with"), stringLiteral).map(StartsWith.tupled) |
       pairByT(path, string("ends-with"), stringLiteral).map(EndsWith.tupled) |
       pairByT(path, string("contains"), stringLiteral).map(Contains.tupled)
-  }
+  }.named("string comparison")
 
   lazy val numberComparison: Parser[NumberComparison] = delay {
     pairByT(path, char('='), double) -| EQ.tupled |
@@ -126,18 +144,9 @@ object QueryParser extends Whitespace {
       pairByT(path, char('>'), double).map(GT.tupled) |
       pairByT(path, string("<="), double).map(LE.tupled) |
       pairByT(path, string(">="), double).map(GE.tupled)
-  }
+  }.named("number comparison")
 
-  lazy val conjunction: Parser[Conjunction] = delay {
-    (query.t ~ conj.t ~ query.t).map { case ((l, c), r) => c.make(l, r) }
-  }
 
-  lazy val conj: Parser[Conj] = delay {
-    and | or
-  }
-
-  lazy val and = string("and") >| Conj.and
-  lazy val or = string("or") >| Conj.or
 }
 
 // Some extra combinators and syntax for coping with whitespace. Something like this might be

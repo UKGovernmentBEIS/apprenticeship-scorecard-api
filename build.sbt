@@ -1,3 +1,4 @@
+
 name := "apprenticeship-scorecard-api"
 
 scalaVersion := "2.11.8"
@@ -11,6 +12,8 @@ enablePlugins(GitBranchPrompt)
 git.useGitDescribe := true
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9004")
+
+routesImport ++= Seq("apprenticeshipScorecard.bindings._", "apprenticeshipScorecard.queries.QueryAST.Query"  )
 
 libraryDependencies ++= Seq(
   cache,
