@@ -1,8 +1,8 @@
-package apprenticeshipScorecard.controllers
+package queries
 
-import atto._
 import atto.Atto._
 import atto.ParseResult._
+import atto._
 
 import scala.annotation.tailrec
 import scala.io.StdIn
@@ -36,9 +36,9 @@ object QueryAST {
 
   case class Path(names: List[String])
 
-  trait Comparison extends Query
+  sealed trait Comparison extends Query
 
-  trait NumberComparison extends Comparison
+  sealed trait NumberComparison extends Comparison
 
   case class GT(lhs: Path, rhs: Double) extends NumberComparison
 
@@ -52,7 +52,7 @@ object QueryAST {
 
   case class NEQ(lhs: Path, rhs: Double) extends NumberComparison
 
-  trait StringComparison extends Comparison
+  sealed trait StringComparison extends Comparison
 
   case class SEQ(lhs: Path, rhs: String) extends StringComparison
 
@@ -64,7 +64,7 @@ object QueryAST {
 
   case class Contains(lhs: Path, rhs: String) extends StringComparison
 
-  trait Conjunction extends Query
+  sealed trait Conjunction extends Query
 
   case class AND(lhs: Query, rhs: Query) extends Conjunction
 
@@ -75,7 +75,6 @@ object QueryAST {
   }
 
   object Conj {
-
     case object and extends Conj {
       override def make(left: Query, right: Query): Conjunction = AND(left, right)
     }
@@ -83,9 +82,7 @@ object QueryAST {
     case object or extends Conj {
       override def make(left: Query, right: Query): Conjunction = OR(left, right)
     }
-
   }
-
 }
 
 object QueryParser extends Whitespace {

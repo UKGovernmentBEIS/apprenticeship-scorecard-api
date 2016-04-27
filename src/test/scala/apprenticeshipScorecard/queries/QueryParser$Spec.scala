@@ -1,6 +1,7 @@
-package apprenticeshipScorecard.controllers
+package apprenticeshipScorecard.queries
 
 import org.scalatest.{FlatSpec, Matchers}
+import queries.{QueryAST, QueryParser}
 
 class QueryParser$Spec extends FlatSpec with Matchers {
 
