@@ -7,7 +7,7 @@ import atto.ParseResult._
 import scala.annotation.tailrec
 import scala.io.StdIn
 
-object QueryParser extends App {
+object QueryParserApp extends App {
   repl()
 
   @tailrec
@@ -19,7 +19,7 @@ object QueryParser extends App {
     StdIn.readLine() match {
       case "" =>
       case line =>
-        ExpressionParser.expr.parseOnly(line) match {
+        QueryParser.query.parseOnly(line) match {
           case Fail(_, _, err) => println(err)
           case Partial(_) =>
           case Done(_, p) => println("Result: " + p)
@@ -27,14 +27,16 @@ object QueryParser extends App {
         repl()
     }
   }
+}
 
+// our abstract syntax tree model
+object QueryAST {
 
-  // our abstract syntax tree model
-  sealed trait Expr
+  sealed trait Query
 
   case class Path(names: List[String])
 
-  trait Comparison extends Expr
+  trait Comparison extends Query
 
   trait NumberComparison extends Comparison
 
@@ -62,35 +64,35 @@ object QueryParser extends App {
 
   case class Contains(lhs: Path, rhs: String) extends StringComparison
 
-  trait Conjunction extends Expr
+  trait Conjunction extends Query
 
-  case class AND(lhs: Expr, rhs: Expr) extends Conjunction
+  case class AND(lhs: Query, rhs: Query) extends Conjunction
 
-  case class OR(lhs: Expr, rhs: Expr) extends Conjunction
+  case class OR(lhs: Query, rhs: Query) extends Conjunction
 
   trait Conj {
-    def make(left: Expr, right: Expr): Conjunction
+    def make(left: Query, right: Query): Conjunction
   }
 
   object Conj {
 
     case object and extends Conj {
-      override def make(left: Expr, right: Expr): Conjunction = AND(left, right)
+      override def make(left: Query, right: Query): Conjunction = AND(left, right)
     }
 
     case object or extends Conj {
-      override def make(left: Expr, right: Expr): Conjunction = OR(left, right)
+      override def make(left: Query, right: Query): Conjunction = OR(left, right)
     }
 
   }
 
 }
 
-object ExpressionParser extends Whitespace {
+object QueryParser extends Whitespace {
 
-  import QueryParser._
+  import QueryAST._
 
-  lazy val expr: Parser[Expr] = delay {
+  lazy val query: Parser[Query] = delay {
     parens(comparison) |
       comparison |
       parens(conjunction) |
@@ -130,7 +132,7 @@ object ExpressionParser extends Whitespace {
   }
 
   lazy val conjunction: Parser[Conjunction] = delay {
-    (expr.t ~ conj.t ~ expr.t).map { case ((l, c), r) => c.make(l, r) }
+    (query.t ~ conj.t ~ query.t).map { case ((l, c), r) => c.make(l, r) }
   }
 
   lazy val conj: Parser[Conj] = delay {
@@ -142,7 +144,7 @@ object ExpressionParser extends Whitespace {
 }
 
 // Some extra combinators and syntax for coping with whitespace. Something like this might be
-// useful in core but it needs some thought.
+// useful in core but it needs some thought - borrowed from the atto source
 trait Whitespace {
 
   // Syntax for turning a parser into one that consumes trailing whitespace

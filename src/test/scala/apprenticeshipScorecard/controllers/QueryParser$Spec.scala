@@ -2,11 +2,10 @@ package apprenticeshipScorecard.controllers
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class ExpressionParser$Spec extends FlatSpec with Matchers {
+class QueryParser$Spec extends FlatSpec with Matchers {
 
+  import QueryAST._
   import QueryParser._
-  import ExpressionParser._
-  import atto._
   import atto.Atto._
   import atto.ParseResult._
 
@@ -75,10 +74,10 @@ class ExpressionParser$Spec extends FlatSpec with Matchers {
   }
 
   "expr" should "match (a = 3)" in {
-    expr.parseOnly("(a = 3)") shouldBe Done("", EQ(Path(List("a")), 3.0))
+    query.parseOnly("(a = 3)") shouldBe Done("", EQ(Path(List("a")), 3.0))
   }
   it should "match (a = 3 or b = 2)" in {
-    expr.parseOnly("(a = 3 or b = 2)") shouldBe Done("", OR(EQ(Path(List("a")), 3.0), EQ(Path(List("b")), 2.0)))
+    query.parseOnly("(a = 3 or b = 2)") shouldBe Done("", OR(EQ(Path(List("a")), 3.0), EQ(Path(List("b")), 2.0)))
   }
 
   "conjunction" should "match a = 3 and b = 2" in {
