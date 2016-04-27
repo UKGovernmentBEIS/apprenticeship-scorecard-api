@@ -80,7 +80,29 @@ class QueryParser$Spec extends FlatSpec with Matchers {
     conjunction.parseOnly("a = 3 or b = 2") shouldBe Done("", OR(EQ(Path(List("a")), 3), EQ(Path(List("b")), 2)))
   }
   it should "match a = 3 and b = 2 or c = 5" in {
-    conjunction.parseOnly("a = 3 and b = 2 or c = 5") shouldBe Done("",AND(EQ(Path(List("a")),3.0),OR(EQ(Path(List("b")),2.0),EQ(Path(List("c")),5.0))))
+    conjunction.parseOnly("a = 3 and b = 2 or c = 5") shouldBe Done("", AND(EQ(Path(List("a")), 3.0), OR(EQ(Path(List("b")), 2.0), EQ(Path(List("c")), 5.0))))
+  }
+
+  it should "match (a = 3 and b = 2) or c = 5" in {
+    conjunction.parseOnly("(a = 3 and b = 2) or c = 5") shouldBe Done("", OR(AND(EQ(Path(List("a")), 3.0), EQ(Path(List("b")), 2.0)), EQ(Path(List("c")), 5.0)))
+  }
+
+  it should "match a = 3 and (b = 2 or c = 5)" in {
+    conjunction.parseOnly("a = 3 and (b = 2 or c = 5)") shouldBe Done("", AND(EQ(Path(List("a")), 3.0), OR(EQ(Path(List("b")), 2.0), EQ(Path(List("c")), 5.0))))
+  }
+
+  it should "match (a = 3 and b = 2) or (c = 5 and d = 6)" in {
+    conjunction.parseOnly("(a = 3 and b = 2) or (c = 5 and d = 6)") shouldBe Done("", OR(AND(EQ(Path(List("a")), 3.0), EQ(Path(List("b")), 2.0)), AND(EQ(Path(List("c")), 5.0), EQ(Path(List("d")), 6.0))))
+  }
+
+  it should "match ((a = 3 and b = 2) or (c = 5 and d = 6)) and x = 9" in {
+    conjunction.parseOnly("((a = 3 and b = 2) or (c = 5 and d = 6)) and x = 9") shouldBe
+      Done("",
+        AND(
+          OR(
+            AND(EQ(Path(List("a")), 3.0), EQ(Path(List("b")), 2.0)),
+            AND(EQ(Path(List("c")), 5.0), EQ(Path(List("d")), 6.0))),
+          EQ(Path(List("x")), 9.0)))
   }
 
   "query" should "match a = 3" in {

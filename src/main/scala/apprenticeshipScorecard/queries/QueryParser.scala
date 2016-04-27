@@ -92,42 +92,39 @@ object QueryParser extends Whitespace {
 
   import QueryAST._
 
-  lazy val query: Parser[Query] =  {
-      conjunction.t | comparison.t <~ endOfInput
+  lazy val query: Parser[Query] = {
+    conjunction.t | comparison.t <~ endOfInput
   }.named("query")
 
   lazy val conjunction: Parser[Conjunction] = delay {
-    (comparison.t ~ conj.t ~ conjunction).map { case ((l, c), r) => c.make(l, r) }|
-    (comparison.t ~ conj.t ~ comparison).map { case ((l, c), r) => c.make(l, r) }
+    (comparison.t ~ conj.t ~ conjunction).map { case ((l, c), r) => c.make(l, r) } |
+      (comparison.t ~ conj.t ~ comparison).map { case ((l, c), r) => c.make(l, r) } |
+      (parens(conjunction).t ~ conj.t ~ comparison).map { case ((l, c), r) => c.make(l, r) } |
+      (comparison.t ~ conj.t ~ parens(conjunction)).map { case ((l, c), r) => c.make(l, r) }|
+      (parens(conjunction).t ~ conj.t ~ parens(conjunction)).map { case ((l, c), r) => c.make(l, r) }
   }.named("conjunction")
 
-  lazy val conj: Parser[Conj] =  {
-    and | or
-  }
+  lazy val conj: Parser[Conj] = and | or
 
-  lazy val and =  {
-    string("and") >| Conj.and
-  }
-  lazy val or =  {
-    string("or") >| Conj.or
-  }
+  lazy val and = string("and") >| Conj.and
+  lazy val or = string("or") >| Conj.or
 
-  lazy val identifier: Parser[String] =  {
+  lazy val identifier: Parser[String] = {
     val startingChar: Parser[Char] = elem(c => c.isLetter || c == '_')
     val identifierChar: Parser[Char] = elem(c => c.isLetterOrDigit || c == '_')
 
     (startingChar ~ many(identifierChar)).map { case (c, cs) => c + cs.mkString }
   }.named("identifier")
 
-  lazy val path: Parser[Path] =  {
+  lazy val path: Parser[Path] = {
     (identifier ~ many(char('.') ~> identifier)).map { case (s, rest) => Path(List(s) ++ rest) }
   }.named("path")
 
-  lazy val comparison: Parser[Comparison] =  {
+  lazy val comparison: Parser[Comparison] = {
     numberComparison | stringComparison
   }
 
-  lazy val stringComparison: Parser[StringComparison] =  {
+  lazy val stringComparison: Parser[StringComparison] = {
     pairByT(path, char('='), stringLiteral).map(SEQ.tupled) |
       pairByT(path, string("!="), stringLiteral).map(SNEQ.tupled) |
       pairByT(path, string("starts-with"), stringLiteral).map(StartsWith.tupled) |
@@ -135,7 +132,7 @@ object QueryParser extends Whitespace {
       pairByT(path, string("contains"), stringLiteral).map(Contains.tupled)
   }.named("string comparison")
 
-  lazy val numberComparison: Parser[NumberComparison] =  {
+  lazy val numberComparison: Parser[NumberComparison] = {
     pairByT(path, char('='), double) -| EQ.tupled |
       pairByT(path, string("!="), double) -| NEQ.tupled |
       pairByT(path, char('<'), double).map(LT.tupled) |
