@@ -8,14 +8,10 @@ enablePlugins(GitBranchPrompt)
 
 git.useGitDescribe := true
 
-libraryDependencies ++= Seq(
-  "org.typelevel" %% "cats" % "0.4.1",
-  "com.chuusai" %% "shapeless" % "2.3.0",
-  "org.tpolecat" %% "atto-core"  % "0.4.2",
-  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0-RC1" % Test
-)
+val core = project.in(file("core"))
+val `play-json` = project.in(file("play-json")).dependsOn(core)
 
+val restless = project.in(file("."))
+  .dependsOn(core).aggregate(core)
+  .dependsOn(`play-json`).aggregate(`play-json`)
 
-resolvers += Resolver.sonatypeRepo("releases")
-
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")

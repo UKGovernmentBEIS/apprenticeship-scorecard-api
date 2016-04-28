@@ -32,7 +32,7 @@ libraryDependencies ++= Seq(
 
 lazy val restless = project.in(file("restless"))
 
-lazy val root = project.in(file(".")).dependsOn(restless).aggregate(restless)
+lazy val `apprenticeship-scorecard-api` = project.in(file(".")).dependsOn(restless).aggregate(restless)
 
 resolvers += Resolver.sonatypeRepo("releases")
 

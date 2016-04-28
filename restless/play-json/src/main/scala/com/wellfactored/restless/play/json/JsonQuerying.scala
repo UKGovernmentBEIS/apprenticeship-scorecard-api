@@ -1,4 +1,4 @@
-package apprenticeshipScorecard.queries
+package com.wellfactored.restless.play.json
 
 import play.api.libs.json._
 

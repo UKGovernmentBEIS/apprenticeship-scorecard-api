@@ -1,10 +1,8 @@
 package apprenticeshipScorecard
 
-import apprenticeshipScorecard.queries.JsonQuerying
-import atto.ParseResult.Done
 import com.wellfactored.restless.QueryAST.Query
-import com.wellfactored.restless.QueryParser
-import play.api.libs.json.{JsError, JsPath, JsSuccess, _}
+import com.wellfactored.restless.play.json.JsonQuerying
+import play.api.libs.json._
 
 
 package object controllers {
