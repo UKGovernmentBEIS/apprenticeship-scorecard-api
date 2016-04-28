@@ -4,9 +4,24 @@ import atto.ParseResult.Done
 import com.wellfactored.restless.{QueryAST, QueryParser}
 import com.wellfactored.restless.QueryAST._
 import play.api.libs.json.{JsError, _}
-import play.api.mvc.QueryStringBindable
+import play.api.mvc.{PathBindable, QueryStringBindable}
+
+import scala.util.Try
 
 object bindings {
+
+  implicit val bdBinding = new PathBindable[BigDecimal] {
+    override def bind(key: String, value: String): Either[String, BigDecimal] = {
+      Try(BigDecimal(value)).toOption match {
+        case Some(bd) => Right(bd)
+        case None => Left(s"could not convert parameter $key to a number")
+
+      }
+    }
+
+    override def unbind(key: String, value: BigDecimal): String = value.toString()
+  }
+
   implicit val queryBinding = new QueryStringBindable[QueryAST.Query] {
 
     import atto._

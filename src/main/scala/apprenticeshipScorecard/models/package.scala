@@ -4,13 +4,15 @@ package object models {
 
   case class UKPRN(id: Long) extends AnyVal
 
+  case class SubjectCode(code: BigDecimal) extends AnyVal
+
   case class LearnerStats(
-                      satisfaction: Option[BigDecimal],
-                      national_satisfaction: Option[BigDecimal],
-                      age_under_19: Option[Int],
-                      age_19_to_24: Option[Int],
-                      age_25_plus: Option[Int],
-                      total: Option[Int])
+                           satisfaction: Option[BigDecimal],
+                           national_satisfaction: Option[BigDecimal],
+                           age_under_19: Option[Int],
+                           age_19_to_24: Option[Int],
+                           age_25_plus: Option[Int],
+                           total: Option[Int])
 
   case class Earnings(median: Option[BigDecimal], proportion_above_21k: Option[BigDecimal])
 
@@ -37,7 +39,7 @@ package object models {
                        website: Option[String])
 
   case class Apprenticeship(
-                             subject_tier_2_code: String,
+                             subject_tier_2_code: SubjectCode,
                              subject_tier_2_title: String,
                              learner_stats: LearnerStats,
                              description: String,

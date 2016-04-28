@@ -1,15 +1,18 @@
 package apprenticeshipScorecard.tools
 
-import apprenticeshipScorecard.models.{Apprenticeship, Provider, UKPRN}
+import apprenticeshipScorecard.models.{Apprenticeship, Provider, SubjectCode, UKPRN}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import cats.std.list._
 
 import scala.io.Source
 
+case class Subject(subject_tier_2_code: SubjectCode, subject_tier_2_title: String)
+
 case class DataStore(
                       providers: Map[UKPRN, Provider],
                       apprenticeships: Seq[Apprenticeship],
+                      subjects: Map[SubjectCode, Subject],
                       errors: Seq[(Int, String)]
                     )
 
@@ -29,7 +32,6 @@ object TSVLoader {
 
     data.errors.foreach { case (line, e) => println(s"line $line: $e") }
     if (data.errors.nonEmpty) println(s"total errors: ${data.errors.length}")
-
   }
 
   def loadFromSource(source: Source): DataStore = {
@@ -48,9 +50,12 @@ object TSVLoader {
 
     val providerMap = providers.groupBy(_.ukprn).map { case (k, vs) => (k, vs.head) }
 
+    val subjects = apprenticeships.map(a => a.subject_tier_2_code -> Subject(a.subject_tier_2_code, a.subject_tier_2_title)).toMap
+
+
     val errs = results.collect { case Invalid(es) => es }.flatten
 
-    DataStore(providerMap, apprenticeships, errs)
+    DataStore(providerMap, apprenticeships, subjects, errs)
   }
 
   def parseRecords(lines: List[String], colNames: List[String]): List[Validated[List[(Int, String)], (Provider, Apprenticeship)]] = {

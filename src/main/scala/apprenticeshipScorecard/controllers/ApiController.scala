@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import apprenticeshipScorecard.bindings
 import apprenticeshipScorecard.models._
-import apprenticeshipScorecard.tools.TSVLoader
+import apprenticeshipScorecard.tools.{Subject, TSVLoader}
 import com.wellfactored.restless.QueryAST.Query
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
@@ -17,6 +17,13 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
 
   def provider(ukprn: Long) = Action { implicit request =>
     TSVLoader.dataStore.providers.get(UKPRN(ukprn)) match {
+      case None => NotFound
+      case Some(p) => Ok(Json.toJson(p))
+    }
+  }
+
+  def subject(subjectCode: BigDecimal) = Action { implicit request =>
+    TSVLoader.dataStore.subjects.get(SubjectCode(subjectCode)) match {
       case None => NotFound
       case Some(p) => Ok(Json.toJson(p))
     }
@@ -43,6 +50,18 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
       params => Ok(Json.toJson(findApprenticeships(params)))
     )
   }
+
+  def subjects(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action {
+    Ok(Json.toJson(findSubjects(page_number, page_size, max_results, q)))
+  }
+
+  def subjectsPost = Action(parse.json) { request =>
+    request.body.validate[Params].fold(
+      invalid => BadRequest("bad parameter format"),
+      params => Ok(Json.toJson(findSubjects(params)))
+    )
+  }
+
 
   implicit val queryR = bindings.queryR
 
@@ -73,6 +92,21 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
         .limit(max_results)
 
     val page = ResultsPage.build(providers, PageNumber(page_number.getOrElse(1)), max_results.getOrElse(Int.MaxValue), PageCount(page_size.getOrElse(50)))
+    SearchResults(page.resultsForPage, page.resultCount, page.currentPage.num, page.perPage.count)
+  }
+
+  implicit val subjectW = Json.writes[Subject]
+
+  def findSubjects(params: Params): SearchResults[Subject] = findSubjects(params.page_number, params.page_size, params.max_results, params.q)
+
+  def findSubjects(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]): SearchResults[Subject] = {
+    val subjects =
+      TSVLoader.dataStore.subjects.values.toList
+        .query(q)
+        .sortBy(_.subject_tier_2_code.code)
+        .limit(max_results)
+
+    val page = ResultsPage.build(subjects, PageNumber(page_number.getOrElse(1)), max_results.getOrElse(Int.MaxValue), PageCount(page_size.getOrElse(50)))
     SearchResults(page.resultsForPage, page.resultCount, page.currentPage.num, page.perPage.count)
   }
 

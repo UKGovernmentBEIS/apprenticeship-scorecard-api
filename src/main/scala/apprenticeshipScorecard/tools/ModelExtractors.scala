@@ -1,6 +1,7 @@
 package apprenticeshipScorecard.tools
 
 import apprenticeshipScorecard.models._
+import FieldExtractors._
 import cats.data.ValidatedNel
 import cats.syntax.cartesian._
 
@@ -10,18 +11,21 @@ trait Extractor[T] {
 
 object UKPRNExtractor extends Extractor[UKPRN] {
 
-  import FieldExtractors._
-
   val fieldName = "ukprn"
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, UKPRN] =
     mandatory[Long](fieldName).map(UKPRN(_))
+}
 
+object SubjectCodeExtractor extends Extractor[SubjectCode] {
+
+  val codeFieldName = "ssa_tier2_code"
+
+  override def extract(implicit fields: Map[String, String]): ValidatedNel[String, SubjectCode] =
+    mandatory[BigDecimal](codeFieldName).map(SubjectCode(_))
 }
 
 object LearnerExtractor extends Extractor[LearnerStats] {
-
-  import FieldExtractors._
 
   val lssFieldName = "learner_satisfaction_score"
   val lssaFieldName = "learner_satisfaction_score_avg"
@@ -44,8 +48,6 @@ object LearnerExtractor extends Extractor[LearnerStats] {
 
 case class EarningsExtractor(national: Boolean = false) extends Extractor[Earnings] {
 
-  import FieldExtractors._
-
   val suffix = if (national) "_avg" else ""
   val medianFieldName = "median_earnings" + suffix
   val above21KFieldName = "proportion_earned_above_21k" + suffix
@@ -59,8 +61,6 @@ case class EarningsExtractor(national: Boolean = false) extends Extractor[Earnin
 }
 
 case class QualificationStatsExtractor(national: Boolean = false) extends Extractor[QualificationStats] {
-
-  import FieldExtractors._
 
   val suffix = if (national) "_avg" else ""
 
@@ -78,8 +78,6 @@ case class QualificationStatsExtractor(national: Boolean = false) extends Extrac
 }
 
 object AddressExtractor extends Extractor[Address] {
-
-  import FieldExtractors._
 
   val addr1FieldName = "address_1"
   val addr2FieldName = "address_2"
@@ -104,8 +102,6 @@ object AddressExtractor extends Extractor[Address] {
 
 object ProviderExtractor extends Extractor[Provider] {
 
-  import FieldExtractors._
-
   val nameFieldName = "provider_name"
   val typeFieldName = "provider_type"
   val regionFieldName = "provider_region"
@@ -129,16 +125,13 @@ object ProviderExtractor extends Extractor[Provider] {
 
 object ApprenticeshipExtractor extends Extractor[Apprenticeship] {
 
-  import FieldExtractors._
-
-  val codeFieldName = "ssa_tier2_code"
   val titleFieldName = "ssa_tier2_description"
   val descriptionFieldName = "ssa_tier2_description"
   val costFieldName = "average_cost"
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Apprenticeship] = {
     val ukprn = UKPRNExtractor.extract
-    val code = mandatory[String](codeFieldName)
+    val code = SubjectCodeExtractor.extract
     val title = mandatory[String](titleFieldName)
     val learner = LearnerExtractor.extract
     val desc = mandatory[String](descriptionFieldName)
@@ -154,8 +147,6 @@ object ApprenticeshipExtractor extends Extractor[Apprenticeship] {
 }
 
 object RecordExtractor extends Extractor[(Provider, Apprenticeship)] {
-
-  import FieldExtractors._
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, (Provider, Apprenticeship)] = {
     (ProviderExtractor.extract |@| ApprenticeshipExtractor.extract).tupled
