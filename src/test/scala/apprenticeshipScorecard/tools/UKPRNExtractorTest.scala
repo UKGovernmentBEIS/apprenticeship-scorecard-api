@@ -9,7 +9,7 @@ class UKPRNExtractorTest extends FlatSpec with Matchers {
   import UKPRNExtractor._
 
   "loader" should "successfully extract" in {
-    extract(Map(fieldName -> "123456 ")) shouldBe Valid(UKPRN(123456))
+    extract(Map(fieldName -> "123456")) shouldBe Valid(UKPRN(123456))
   }
 
   it should "fail to extract a non-numeric string" in {
