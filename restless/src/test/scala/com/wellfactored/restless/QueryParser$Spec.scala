@@ -1,6 +1,7 @@
-package apprenticeshipScorecard.queries
+package com.wellfactored.restless
 
 import org.scalatest.{FlatSpec, Matchers}
+
 import scala.language.implicitConversions
 
 class QueryParser$Spec extends FlatSpec with Matchers {

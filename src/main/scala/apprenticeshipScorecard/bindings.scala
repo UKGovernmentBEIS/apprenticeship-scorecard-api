@@ -1,7 +1,9 @@
 package apprenticeshipScorecard
 
-import apprenticeshipScorecard.queries.{QueryAST, QueryParser}
-import apprenticeshipScorecard.queries.QueryAST._
+import atto.ParseResult.Done
+import com.wellfactored.restless.{QueryAST, QueryParser}
+import com.wellfactored.restless.QueryAST._
+import play.api.libs.json.{JsError, _}
 import play.api.mvc.QueryStringBindable
 
 object bindings {
@@ -21,6 +23,21 @@ object bindings {
     }
 
     override def unbind(key: String, value: Query): String = ???
+  }
+
+  implicit val queryR = new Reads[Query] {
+
+    import atto._
+    import Atto._
+
+    override def reads(json: JsValue): JsResult[Query] = {
+      implicitly[Reads[String]].reads(json).flatMap { qs =>
+        QueryParser.query.parseOnly(qs) match {
+          case Done(_, q) => JsSuccess(q, JsPath())
+          case _ => JsError("failed to parse query string")
+        }
+      }
+    }
   }
 
 }

@@ -2,9 +2,10 @@ package apprenticeshipScorecard.controllers
 
 import javax.inject.Inject
 
+import apprenticeshipScorecard.bindings
 import apprenticeshipScorecard.models._
-import apprenticeshipScorecard.queries.QueryAST.Query
 import apprenticeshipScorecard.tools.TSVLoader
+import com.wellfactored.restless.QueryAST.Query
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 
@@ -42,6 +43,8 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
       params => Ok(Json.toJson(findApprenticeships(params)))
     )
   }
+
+  implicit val queryR = bindings.queryR
 
   case class Params(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query])
 

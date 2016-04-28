@@ -4,7 +4,7 @@ import play.api.libs.json._
 
 object JsonQuerying {
 
-  import QueryAST._
+  import com.wellfactored.restless.QueryAST._
 
   def query(q: Query)(implicit doc: JsObject): Boolean = {
     q match {

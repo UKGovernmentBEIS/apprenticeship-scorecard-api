@@ -1,4 +1,4 @@
-package apprenticeshipScorecard.queries
+package com.wellfactored.restless
 
 import atto.Atto._
 import atto.ParseResult._

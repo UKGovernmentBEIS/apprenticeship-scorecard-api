@@ -1,8 +1,9 @@
 package apprenticeshipScorecard
 
-import apprenticeshipScorecard.queries.{JsonQuerying, QueryParser}
-import apprenticeshipScorecard.queries.QueryAST.Query
+import apprenticeshipScorecard.queries.JsonQuerying
 import atto.ParseResult.Done
+import com.wellfactored.restless.QueryAST.Query
+import com.wellfactored.restless.QueryParser
 import play.api.libs.json.{JsError, JsPath, JsSuccess, _}
 
 
@@ -25,19 +26,6 @@ package object controllers {
     }
   }
 
-  implicit val queryR = new Reads[Query] {
 
-    import atto._
-    import Atto._
-
-    override def reads(json: JsValue): JsResult[Query] = {
-      implicitly[Reads[String]].reads(json).flatMap { qs =>
-        QueryParser.query.parseOnly(qs) match {
-          case Done(_, q) => JsSuccess(q, JsPath())
-          case _ => JsError("failed to parse query string")
-        }
-      }
-    }
-  }
 }
 
