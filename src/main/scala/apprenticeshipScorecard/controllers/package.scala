@@ -16,7 +16,12 @@ package object controllers {
 
     def query(qo: Option[Query]): Seq[T] = qo match {
       case None => xs
-      case Some(q) => xs.filter { x => JsonQuerying.query(Json.toJson(x), q) }
+      case Some(q) => xs.filter { x =>
+        Json.toJson(x) match {
+          case doc: JsObject => JsonQuerying.query(q)(doc)
+          case _ => false
+        }
+      }
     }
   }
 

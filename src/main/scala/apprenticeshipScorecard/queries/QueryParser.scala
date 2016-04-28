@@ -36,21 +36,27 @@ object QueryAST {
 
   case class Path(names: List[String])
 
+  sealed trait NumberRef
+
+  case class NumberConstant(d: Double) extends NumberRef
+
+  case class NumberPath(p: Path) extends NumberRef
+
   sealed trait Comparison extends Query
 
   sealed trait NumberComparison extends Comparison
 
-  case class GT(lhs: Path, rhs: Double) extends NumberComparison
+  case class GT(lhs: Path, rhs: NumberRef) extends NumberComparison
 
-  case class GE(lhs: Path, rhs: Double) extends NumberComparison
+  case class GE(lhs: Path, rhs: NumberRef) extends NumberComparison
 
-  case class LT(lhs: Path, rhs: Double) extends NumberComparison
+  case class LT(lhs: Path, rhs: NumberRef) extends NumberComparison
 
-  case class LE(lhs: Path, rhs: Double) extends NumberComparison
+  case class LE(lhs: Path, rhs: NumberRef) extends NumberComparison
 
-  case class EQ(lhs: Path, rhs: Double) extends NumberComparison
+  case class EQ(lhs: Path, rhs: NumberRef) extends NumberComparison
 
-  case class NEQ(lhs: Path, rhs: Double) extends NumberComparison
+  case class NEQ(lhs: Path, rhs: NumberRef) extends NumberComparison
 
   sealed trait StringComparison extends Comparison
 
@@ -133,13 +139,18 @@ object QueryParser extends Whitespace {
   }.named("string comparison")
 
   lazy val numberComparison: Parser[NumberComparison] = {
-    pairByT(path, char('='), double) -| EQ.tupled |
-      pairByT(path, string("!="), double) -| NEQ.tupled |
-      pairByT(path, char('<'), double).map(LT.tupled) |
-      pairByT(path, char('>'), double).map(GT.tupled) |
-      pairByT(path, string("<="), double).map(LE.tupled) |
-      pairByT(path, string(">="), double).map(GE.tupled)
+    pairByT(path, char('='), numberRef) -| EQ.tupled |
+      pairByT(path, string("!="), numberRef) -| NEQ.tupled |
+      pairByT(path, char('<'), numberRef).map(LT.tupled) |
+      pairByT(path, char('>'), numberRef).map(GT.tupled) |
+      pairByT(path, string("<="), numberRef).map(LE.tupled) |
+      pairByT(path, string(">="), numberRef).map(GE.tupled)
   }.named("number comparison")
+
+  lazy val numberRef: Parser[NumberRef] = {
+    double -| NumberConstant |
+      path -| NumberPath
+  }
 
 
 }

@@ -1,6 +1,7 @@
 package apprenticeshipScorecard.queries
 
 import org.scalatest.{FlatSpec, Matchers}
+import scala.language.implicitConversions
 
 class QueryParser$Spec extends FlatSpec with Matchers {
 
@@ -52,6 +53,10 @@ class QueryParser$Spec extends FlatSpec with Matchers {
   it should """match a contains "foo"""" in {
     stringComparison.parseOnly("""a contains "foo"""") shouldBe Done("", Contains(Path(List("a")), "foo"))
   }
+
+  implicit def numconstd(d: Double): NumberRef = NumberConstant(d)
+
+  implicit def numconsti(i: Int): NumberRef = NumberConstant(i)
 
   "numberComparison" should "match a = 3.0" in {
     numberComparison.parseOnly("a = 3.0") shouldBe Done("", EQ(Path(List("a")), 3.0))
