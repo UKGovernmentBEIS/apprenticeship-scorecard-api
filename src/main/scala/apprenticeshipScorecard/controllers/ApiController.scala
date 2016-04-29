@@ -35,13 +35,13 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
 
   def providers(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action {
     val params = Params(page_number, page_size, max_results, q)
-    Ok(Json.toJson(dataStore.providers.values.toList.select(params)(_.name)))
+    Ok(Json.toJson(dataStore.providers.values.toList.select(params, new IdProjection[Provider])(_.name)))
   }
 
   def providersPost = Action(parse.json) { request =>
     request.body.validate[Params].fold(
       invalid => BadRequest("bad parameter format"),
-      params => Ok(Json.toJson(dataStore.providers.values.toList.select(params)(_.name)))
+      params => Ok(Json.toJson(dataStore.providers.values.toList.select(params, new IdProjection[Provider])(_.name)))
     )
   }
 
@@ -49,13 +49,13 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
   def apprenticeships(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action {
     val params = Params(page_number, page_size, max_results, q)
 
-    Ok(Json.toJson(dataStore.apprenticeships.select(params)(_.description)))
+    Ok(Json.toJson(dataStore.apprenticeships.select(params, new IdProjection[Apprenticeship])(_.description)))
   }
 
   def apprenticeshipsPost = Action(parse.json) { request =>
     request.body.validate[Params].fold(
       invalid => BadRequest("bad parameter format"),
-      params => Ok(Json.toJson(dataStore.apprenticeships.select(params)(_.description)))
+      params => Ok(Json.toJson(dataStore.apprenticeships.select(params, new IdProjection[Apprenticeship])(_.description)))
     )
   }
 

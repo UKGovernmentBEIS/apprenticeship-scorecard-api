@@ -1,6 +1,6 @@
 package apprenticeshipScorecard
 
-import apprenticeshipScorecard.controllers.JsonExtractor
+import apprenticeshipScorecard.controllers.Projection
 import atto.ParseResult.Done
 import com.wellfactored.restless.{QueryAST, QueryParser}
 import com.wellfactored.restless.QueryAST._
@@ -41,9 +41,6 @@ object bindings {
     override def unbind(key: String, value: Query): String = ???
   }
 
-  implicit val extractorR = new Reads[JsonExtractor] {
-    override def reads(json: JsValue): JsResult[JsonExtractor] = JsError(s"unimplemented")
-  }
 
   implicit val queryR = new Reads[Query] {
 
