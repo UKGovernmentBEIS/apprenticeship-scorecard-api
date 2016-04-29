@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 
 class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller {
 
-  import Finder._
+  import Selector._
 
   implicit val providerFormat = Json.format[Provider]
   implicit val apprenticeshipFormat = Json.format[Apprenticeship]
@@ -33,29 +33,36 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
 
   import TSVLoader.dataStore
 
-  def providers(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action {
-    val params = Params(page_number, page_size, max_results, q)
-    Ok(Json.toJson(dataStore.providers.values.toList.select(params, new IdProjection[Provider])(_.name)))
+  def providers(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], qo: Option[Query]) = Action {
+    val params = Params(page_number, page_size, max_results, qo, None)
+    val results = dataStore.providers.values.toSeq.select(params, new JsonIdentity[Provider].project)(_.name)
+
+    Ok(Json.toJson(results))
   }
 
   def providersPost = Action(parse.json) { request =>
     request.body.validate[Params].fold(
       invalid => BadRequest("bad parameter format"),
-      params => Ok(Json.toJson(dataStore.providers.values.toList.select(params, new IdProjection[Provider])(_.name)))
+      params => {
+        val projectF: Provider => JsObject = params.extract.map { paths =>
+          new JsonProjector[Provider](paths.map(_.names)).project(_)
+        }.getOrElse(new JsonIdentity[Provider].project(_))
+
+        Ok(Json.toJson(dataStore.providers.values.toList.select(params, projectF)(_.name)))
+      }
     )
   }
 
-
   def apprenticeships(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action {
-    val params = Params(page_number, page_size, max_results, q)
+    val params = Params(page_number, page_size, max_results, q, None)
 
-    Ok(Json.toJson(dataStore.apprenticeships.select(params, new IdProjection[Apprenticeship])(_.description)))
+    Ok(Json.toJson(dataStore.apprenticeships.select(params, new JsonIdentity[Apprenticeship].project)(_.description)))
   }
 
   def apprenticeshipsPost = Action(parse.json) { request =>
     request.body.validate[Params].fold(
       invalid => BadRequest("bad parameter format"),
-      params => Ok(Json.toJson(dataStore.apprenticeships.select(params, new IdProjection[Apprenticeship])(_.description)))
+      params => Ok(Json.toJson(dataStore.apprenticeships.select(params, new JsonIdentity[Apprenticeship].project)(_.description)))
     )
   }
 

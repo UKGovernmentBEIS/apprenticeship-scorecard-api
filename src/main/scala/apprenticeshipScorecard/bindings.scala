@@ -1,9 +1,8 @@
 package apprenticeshipScorecard
 
-import apprenticeshipScorecard.controllers.Projection
 import atto.ParseResult.Done
-import com.wellfactored.restless.{QueryAST, QueryParser}
 import com.wellfactored.restless.QueryAST._
+import com.wellfactored.restless.{QueryAST, QueryParser}
 import play.api.libs.json.{JsError, _}
 import play.api.mvc.{PathBindable, QueryStringBindable}
 
