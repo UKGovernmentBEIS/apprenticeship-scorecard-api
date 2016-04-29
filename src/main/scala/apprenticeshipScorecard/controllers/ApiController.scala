@@ -35,7 +35,7 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
 
   def providers(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], qo: Option[Query]) = Action {
     val params = Params(page_number, page_size, max_results, qo, None)
-    val results = dataStore.providers.values.toSeq.select(params, new JsonIdentity[Provider].project)(_.name)
+    val results = dataStore.providers.values.toSeq.select(params)(_.name)
 
     Ok(Json.toJson(results))
   }
@@ -43,26 +43,20 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
   def providersPost = Action(parse.json) { request =>
     request.body.validate[Params].fold(
       invalid => BadRequest("bad parameter format"),
-      params => {
-        val projectF: Provider => JsObject = params.extract.map { paths =>
-          new JsonProjector[Provider](paths.map(_.names)).project(_)
-        }.getOrElse(new JsonIdentity[Provider].project(_))
-
-        Ok(Json.toJson(dataStore.providers.values.toList.select(params, projectF)(_.name)))
-      }
+      params => Ok(Json.toJson(dataStore.providers.values.toList.select(params)(_.name)))
     )
   }
 
   def apprenticeships(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action {
     val params = Params(page_number, page_size, max_results, q, None)
 
-    Ok(Json.toJson(dataStore.apprenticeships.select(params, new JsonIdentity[Apprenticeship].project)(_.description)))
+    Ok(Json.toJson(dataStore.apprenticeships.select(params)(_.description)))
   }
 
   def apprenticeshipsPost = Action(parse.json) { request =>
     request.body.validate[Params].fold(
       invalid => BadRequest("bad parameter format"),
-      params => Ok(Json.toJson(dataStore.apprenticeships.select(params, new JsonIdentity[Apprenticeship].project)(_.description)))
+      params => Ok(Json.toJson(dataStore.apprenticeships.select(params)(_.description)))
     )
   }
 

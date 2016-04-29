@@ -1,6 +1,7 @@
 package apprenticeshipScorecard.controllers
 
 import apprenticeshipScorecard.bindings
+import apprenticeshipScorecard.models.Provider
 import apprenticeshipScorecard.tools.{Subject, TSVLoader}
 import com.wellfactored.restless.QueryAST.{Path, Query}
 import com.wellfactored.restless.play.json.JsonQuerying
@@ -37,10 +38,14 @@ object Selector {
   }
 
   implicit class Select[T: Writes](xs: Seq[T]) {
-    def select[B, T2](params: Params, projection: T => T2)(sortKey: (T) => B)(implicit ordering: Ordering[B], t2w: Writes[T2]): SearchResults[T2] = {
+    def select[B](params: Params)(sortKey: (T) => B)(implicit ordering: Ordering[B]): SearchResults[JsObject] = {
       import params._
 
-      val results: Seq[T2] = xs
+      val projection: T => JsObject = params.extract.map { paths =>
+        new JsonProjector[T](paths.map(_.names)).project(_)
+      }.getOrElse(new JsonIdentity[T].project(_))
+
+      val results: Seq[JsObject] = xs
         .filter(filterFn(q))
         .sortBy(sortKey)
         .limit(max_results)
