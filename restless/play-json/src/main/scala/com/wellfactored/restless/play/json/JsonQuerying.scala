@@ -2,6 +2,11 @@ package com.wellfactored.restless.play.json
 
 import play.api.libs.json._
 
+/**
+  * This is an execution engine to apply a Query AST to a document in the form of a JsObject.
+  *
+  * TODO: combine SEQ/SNEQ with EQ/NEQ
+  */
 object JsonQuerying {
 
   import com.wellfactored.restless.QueryAST._

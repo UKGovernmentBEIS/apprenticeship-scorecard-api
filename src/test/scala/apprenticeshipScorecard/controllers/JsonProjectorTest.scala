@@ -1,5 +1,6 @@
 package apprenticeshipScorecard.controllers
 
+import com.wellfactored.restless.play.json.JsonProjector
 import org.scalatest.{FlatSpec, Matchers}
 import play.api.libs.json.{JsObject, Json}
 
