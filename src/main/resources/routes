@@ -2,11 +2,11 @@
 GET         /provider/:ukprn             apprenticeshipScorecard.controllers.ApiController.provider(ukprn:Long)
 GET         /subject/:subjectCode        apprenticeshipScorecard.controllers.ApiController.subject(subjectCode:BigDecimal)
 
-GET         /providers                   apprenticeshipScorecard.controllers.ApiController.providers(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
-POST        /providers                   apprenticeshipScorecard.controllers.ApiController.providersPost
+GET         /providers                   apprenticeshipScorecard.controllers.ApiController.providersGET(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
+POST        /providers                   apprenticeshipScorecard.controllers.ApiController.providersPOST
 
-GET         /apprenticeships             apprenticeshipScorecard.controllers.ApiController.apprenticeships(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
-POST        /apprenticeships             apprenticeshipScorecard.controllers.ApiController.apprenticeshipsPost
+GET         /apprenticeships             apprenticeshipScorecard.controllers.ApiController.apprenticeshipsGET(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
+POST        /apprenticeships             apprenticeshipScorecard.controllers.ApiController.apprenticeshipsPOST
 
-GET         /subjects                    apprenticeshipScorecard.controllers.ApiController.subjects(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
-POST        /subjects                    apprenticeshipScorecard.controllers.ApiController.subjectsPost
+GET         /subjects                    apprenticeshipScorecard.controllers.ApiController.subjectsGET(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
+POST        /subjects                    apprenticeshipScorecard.controllers.ApiController.subjectsPOST

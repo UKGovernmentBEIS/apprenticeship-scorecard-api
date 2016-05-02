@@ -27,12 +27,10 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats" % "0.4.1",
   "com.chuusai" %% "shapeless" % "2.3.0",
   "org.tpolecat" %% "atto-core" % "0.4.2",
+  "com.wellfactored" %% "restless-core" % "0.1.2",
+  "com.wellfactored" %% "restless-play-json" % "0.1.2",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0-RC1" % Test
 )
-
-lazy val restless = project.in(file("restless"))
-
-lazy val `apprenticeship-scorecard-api` = project.in(file(".")).dependsOn(restless).aggregate(restless)
 
 resolvers += Resolver.sonatypeRepo("releases")
 
