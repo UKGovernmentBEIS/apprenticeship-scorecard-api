@@ -35,13 +35,13 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
 
   def providersGET(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], qo: Option[Query]) = Action {
     val params = Params(page_number, page_size, max_results, qo, None)
-    val results = dataStore.providers.values.toSeq.select(params)(_.name)
+    val results = dataStore.providers.values.select(params)(_.name)
 
     Ok(Json.toJson(results))
   }
 
   def providersPOST = Action(parse.json) { request =>
-    jsonAction(request.body) { params: Params => dataStore.providers.values.toList.select(params)(_.name) }
+    jsonAction(request.body) { params: Params => dataStore.providers.values.select(params)(_.name) }
   }
 
   def apprenticeshipsGET(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action {
@@ -57,11 +57,11 @@ class ApiController @Inject()(implicit ec: ExecutionContext) extends Controller 
   def subjectsGET(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action {
     val params = Params(page_number, page_size, max_results, q, None)
 
-    Ok(Json.toJson(dataStore.subjects.values.toSeq.select(params)(_.subject_tier_2_code.code)))
+    Ok(Json.toJson(dataStore.subjects.values.select(params)(_.subject_tier_2_code.code)))
   }
 
   def subjectsPOST = Action(parse.json) { request =>
-    jsonAction(request.body) { params: Params => dataStore.subjects.values.toList.select(params)(_.subject_tier_2_code.code) }
+    jsonAction(request.body) { params: Params => dataStore.subjects.values.select(params)(_.subject_tier_2_code.code) }
   }
 
   def jsonAction[T: Reads, W: Writes](json: JsValue)(body: T => W): Result = {

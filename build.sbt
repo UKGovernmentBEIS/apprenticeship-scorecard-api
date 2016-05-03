@@ -21,7 +21,7 @@ libraryDependencies ++= Seq(
   "joda-time" % "joda-time" % "2.7",
   "org.joda" % "joda-convert" % "1.7",
   "org.typelevel" %% "cats" % "0.4.1",
-  "com.wellfactored" %% "restless" % "0.1.5",
+  "com.wellfactored" %% "restless-play-json" % "0.1.7",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0-RC1" % Test
 )
 
