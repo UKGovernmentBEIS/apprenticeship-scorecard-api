@@ -1,5 +1,6 @@
 package apprenticeshipScorecard
 
+import atto.Atto._
 import atto.ParseResult.Done
 import com.wellfactored.restless.QueryAST._
 import com.wellfactored.restless.{QueryAST, QueryParser}
@@ -24,9 +25,6 @@ object bindings {
 
   implicit val queryBinding = new QueryStringBindable[QueryAST.Query] {
 
-    import atto._
-    import Atto._
-    import ParseResult._
 
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Query]] = {
       params.get(key).map { qs =>
@@ -43,8 +41,6 @@ object bindings {
 
   implicit val queryR = new Reads[Query] {
 
-    import atto._
-    import Atto._
 
     override def reads(json: JsValue): JsResult[Query] = {
       implicitly[Reads[String]].reads(json).flatMap { qs =>
