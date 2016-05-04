@@ -7,6 +7,3 @@ POST        /providers                   apprenticeshipScorecard.controllers.Api
 
 GET         /apprenticeships             apprenticeshipScorecard.controllers.ApiController.apprenticeshipsGET(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
 POST        /apprenticeships             apprenticeshipScorecard.controllers.ApiController.apprenticeshipsPOST
-
-GET         /subjects                    apprenticeshipScorecard.controllers.ApiController.subjectsGET(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
-POST        /subjects                    apprenticeshipScorecard.controllers.ApiController.subjectsPOST

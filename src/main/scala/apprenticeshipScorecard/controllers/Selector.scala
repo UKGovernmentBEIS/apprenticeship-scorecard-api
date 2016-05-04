@@ -21,8 +21,8 @@ object Selector {
                      page_number: Option[Int],
                      page_size: Option[Int],
                      max_results: Option[Int],
-                     q: Option[Query],
-                     extract: Option[List[Path]])
+                     query: Option[Query],
+                     fields: Option[List[Path]])
 
   implicit val paramsR = Json.reads[Params]
 
@@ -31,7 +31,7 @@ object Selector {
     def select[B](params: Params)(sortKey: (T) => B)(implicit ordering: Ordering[B]): SearchResults[JsValue] = {
       import params._
 
-      val results = selectJson(ts, params.q, params.extract, params.max_results)(sortKey).toSeq
+      val results = selectJson(ts, params.query, params.fields, params.max_results)(sortKey).toSeq
       val page = ResultsPage.build(results, PageNumber(page_number.getOrElse(1)), max_results.getOrElse(Int.MaxValue), PageCount(page_size.getOrElse(50)))
       SearchResults(page.resultsForPage, page.resultCount, page.currentPage.num, page.perPage.count)
     }
@@ -39,20 +39,5 @@ object Selector {
 
 
   implicit val subjectW = Json.writes[Subject]
-
-  def findSubjects(params: Params): SearchResults[Subject] = findSubjects(params.page_number, params.page_size, params.max_results, params.q)
-
-  def findSubjects(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]): SearchResults[Subject] = {
-    val subjects =
-      TSVLoader.dataStore.subjects.values
-        .where(q)
-        .toSeq
-        .sortBy(_.subject_tier_2_code.code)
-        .limit(max_results)
-
-    val page = ResultsPage.build(subjects.toSeq, PageNumber(page_number.getOrElse(1)), max_results.getOrElse(Int.MaxValue), PageCount(page_size.getOrElse(50)))
-    SearchResults(page.resultsForPage, page.resultCount, page.currentPage.num, page.perPage.count)
-  }
-
 
 }
