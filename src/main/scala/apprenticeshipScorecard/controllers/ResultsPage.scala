@@ -27,9 +27,6 @@ object ResultsPage {
     val pageCount = PageCount((cappedResults.length / perPage.count) + (if (cappedResults.length % perPage.count > 0) 1 else 0))
     val currentPage = pageCount.limit(selectedPage)
 
-    val hasResults = results.nonEmpty
-    val tooManyResults = results.length > maxResults
-
     //noinspection DropTakeToSlice
     val resultsForPage: Seq[T] = cappedResults.drop((currentPage.num - 1) * perPage.count).take(perPage.count)
 
