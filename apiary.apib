@@ -9,6 +9,14 @@ API to access data on UK apprenticeships and providers
 
 List all (by default) apprenticeships in the data set. The results will be paged. The page size and page number can be set by the relevant optional parameters and the total number of results that are selected can be limited by the optional `max_results` parameter.
 
+You can use a query to select results that match specific conditions. The query language is simple, but quite powerful. You can reference fields in the json using dotted paths (e.g. `description` or `learner_stats.satisfaction`), compare strings (`=`, `!=`, `starts with`, `ends with` and `contains`) and compare numbers `=`, `!=`, `>`, `<`, `>=` and `<=`). Here are some examples:
+
+* `stats.success_rate > 60`
+* `description starts with "accounting"` - string comparisons are case-insensitive
+* `stats.success_rate > national_stats.success_rate and earnings.median > 15000`
+
+Be aware that if you use a path that doesn't match in a particular result object then that part of the query will come out as `false`. This is a convenient way to select only results that have a certain field defined.
+
 ### List and filter apprenticeships [GET /apprenticeships{?query}{?max_results}{?page_size}{?page_number}]
 
 + Parameters
