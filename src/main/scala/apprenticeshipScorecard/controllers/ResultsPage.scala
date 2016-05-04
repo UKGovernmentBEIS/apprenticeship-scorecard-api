@@ -19,7 +19,7 @@ object ResultsPage {
   def build[T](results: Seq[T], selectedPage: PageNumber, maxResults: Int = 100, perPage: PageCount = PageCount(10)): ResultsPage[T] = {
     require(maxResults > 0)
     require(perPage.count > 0)
-    assume(maxResults > perPage.count)
+    assume(maxResults > 0)
 
     val cappedResults = results.take(maxResults)
 
