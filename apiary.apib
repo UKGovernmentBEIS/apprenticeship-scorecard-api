@@ -9,16 +9,14 @@ API to access data on UK apprenticeships and providers
 
 List all (by default) apprenticeships in the data set. The results will be paged. The page size and page number can be set by the relevant optional parameters and the total number of results that are selected can be limited by the optional `max_results` parameter.
 
-### List and filter apprenticeships [GET /apprenticeships?q=query-string&max_results=500&page_size=20&page_number=2]
-
-All parameters are optional.
+### List and filter apprenticeships [GET /apprenticeships{?query}{?max_results}{?page_size}{?page_number}]
 
 + Parameters
     + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of apprenticeships
-    + max_results: 500 (number, optional) - limit the number of apprenticeships that are selected
-    + page_size: 20 (number, optional) - limit the number of apprenticeships that are returned in a page
+    + max_results: 500 (number, optional) - limit the number of apprenticeships that are selected. If note specified then all matching results will be selected.
+    + page_size (number, optional) - limit the number of apprenticeships that are returned in a page
         + Default: 50
-    + page_number: 7 (number, optional) - the page number to return
+    + page_number (number, optional) - the page number to return
         + Default: 1
 
 + Response 200 (application/json)
