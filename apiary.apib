@@ -14,12 +14,18 @@ be limited by the optional `max_results` parameter.
 
 
 ### List and filter apprenticeships [GET /apprenticeships?q=query-string&max_results=500&page_size=20&page_number=2]
+
+All parameters are optional.
+
 + Parameters
-    + query: learner_stats.total > 200 (string) - a query expression that will be used to filter the list of apprenticeships
-    
-    + max_results: 500 (number) - limit the number of apprenticeships that are selected
-    + page_size: 20 (number) - limit the number of apprenticeships that are returned in a page
-    + page_number: 1 (number) - the page number to return
+    + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of apprenticeships
+        + Default: none
+    + max_results: 500 (number, optional) - limit the number of apprenticeships that are selected
+        + Default: all results
+    + page_size: 20 (number, optional) - limit the number of apprenticeships that are returned in a page
+        + Default: 50
+    + page_number: 7 (number, optional) - the page number to return
+        + Default: 1
 
 + Response 200 (application/json)
 
@@ -78,6 +84,7 @@ be limited by the optional `max_results` parameter.
 
 ### List, filter and extract fields from apprenticeships [POST /apprenticeships]
 
+
 + Request (application/json)
 
         {
@@ -90,6 +97,9 @@ be limited by the optional `max_results` parameter.
             "page_size": 10,
             "query": "earnings.median > 0"
         }
+
+        All fields in the request body are optional, but at the very least you must provide an empty json object (`{}`).
+
 
 + Response 200 (application/json)
 
