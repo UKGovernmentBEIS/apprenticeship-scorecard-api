@@ -5,85 +5,145 @@ HOST: https://apprenticeship-scorecard-api.herokuapp.com/
 
 API to access data on UK apprenticeships and providers
 
-## Apprenticeships Collection [/apprenticeships?q=query-string&max_results=500&page_size=20&page_number=2]
+## Apprenticeships Collection [/apprenticeships]
 
 List all (by default) apprenticeships in the data set. The results will be paged. The page size and page number
 can be set by the relevant optional parameters and the total number of results that are selected can
 be limited by the optional `max_results` parameter.
 
+
+
+### List and filter apprenticeships [GET /apprenticeships?q=query-string&max_results=500&page_size=20&page_number=2]
 + Parameters
-    + query: learner_stats.total > 200 (string) - a query string that will be used to filter the list of apprenticeships
+    + query: learner_stats.total > 200 (string) - a query expression that will be used to filter the list of apprenticeships
+    
     + max_results: 500 (number) - limit the number of apprenticeships that are selected
     + page_size: 20 (number) - limit the number of apprenticeships that are returned in a page
     + page_number: 1 (number) - the page number to return
 
-### List and filter apprenticeships [GET]
-
-
 + Response 200 (application/json)
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
+        {
+            "results": [
+                {
+                    "subject_tier_2_code": 0,
+                    "subject_tier_2_title": "All",
+                    "learner_stats": {
+                        "satisfaction": 9.1,
+                        "national_satisfaction": 8.6,
+                        "age_under_19": 10,
+                        "age_19_to_24": 40,
+                        "age_25_plus": 110,
+                        "total": 160
+                    },
+                    "description": "All",
+                    "provider_id": 10000020,
+                    "stats": {
+                        "success_rate": 84.2
+                    },
+                    "national_stats": {
+                        "success_rate": 68.9
+                    },
+                    "earnings": {},
+                    "national_earnings": {},
+                    "average_cost": 0
+                },
+                {
+                    "subject_tier_2_code": 15.1,
+                    "subject_tier_2_title": "Accounting and Finance",
+                    "learner_stats": {},
+                    "description": "Accounting and Finance",
+                    "provider_id": 10000060,
+                    "stats": {
+                        "success_rate": 90.3
+                    },
+                    "national_stats": {
+                        "success_rate": 76.1
+                    },
+                    "earnings": {
+                        "median": 18700,
+                        "proportion_above_21k": 0.33
+                    },
+                    "national_earnings": {
+                        "median": 19100,
+                        "proportion_above_21k": 0.34
+                    },
+                    "average_cost": 0
+                }
+            ],
+            "result_count": 2,
+            "page_number": 1,
+            "page_size": 50
+        }
 
-### List, filter and extract fields from apprenticeships [POST]
-
-
+### List, filter and extract fields from apprenticeships [POST /apprenticeships]
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "fields": [
+                "earnings",
+                "national_earnings"
+            ],
+            "max_results": 500,
+            "page_number": 2,
+            "page_size": 10,
+            "query": "earnings.median > 0"
         }
 
-+ Response 201 (application/json)
-
-    + Headers
-
-            Location: /questions/2
++ Response 200 (application/json)
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
+                "results": [
                     {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
+                        "subject_tier_2_code": 0,
+                        "subject_tier_2_title": "All",
+                        "learner_stats": {
+                            "satisfaction": 9.1,
+                            "national_satisfaction": 8.6,
+                            "age_under_19": 10,
+                            "age_19_to_24": 40,
+                            "age_25_plus": 110,
+                            "total": 160
+                        },
+                        "description": "All",
+                        "provider_id": 10000020,
+                        "stats": {
+                            "success_rate": 84.2
+                        },
+                        "national_stats": {
+                            "success_rate": 68.9
+                        },
+                        "earnings": {},
+                        "national_earnings": {},
+                        "average_cost": 0
+                    },
+                    {
+                        "subject_tier_2_code": 15.1,
+                        "subject_tier_2_title": "Accounting and Finance",
+                        "learner_stats": {},
+                        "description": "Accounting and Finance",
+                        "provider_id": 10000060,
+                        "stats": {
+                            "success_rate": 90.3
+                        },
+                        "national_stats": {
+                            "success_rate": 76.1
+                        },
+                        "earnings": {
+                            "median": 18700,
+                            "proportion_above_21k": 0.33
+                        },
+                        "national_earnings": {
+                            "median": 19100,
+                            "proportion_above_21k": 0.34
+                        },
+                        "average_cost": 0
                     }
-                ]
+                ],
+                "result_count": 2,
+                "page_number": 1,
+                "page_size": 50
             }
