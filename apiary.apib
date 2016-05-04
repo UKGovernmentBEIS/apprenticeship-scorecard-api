@@ -5,9 +5,20 @@ HOST: https://apprenticeship-scorecard-api.herokuapp.com/
 
 API to access data on UK apprenticeships and providers
 
-## Apprenticeships Collection [/apprenticeships]
+## Apprenticeships Collection [/apprenticeships?q=query-string&max_results=500&page_size=20&page_number=2]
 
-### List and filter all apprenticeships [GET]
+List all (by default) apprenticeships in the data set. The results will be paged. The page size and page number
+can be set by the relevant optional parameters and the total number of results that are selected can
+be limited by the optional `max_results` parameter.
+
++ Parameters
+    + query: learner_stats.total > 200 (string) - a query string that will be used to filter the list of apprenticeships
+    + max_results: 500 (number) - limit the number of apprenticeships that are selected
+    + page_size: 20 (number) - limit the number of apprenticeships that are returned in a page
+    + page_number: 1 (number) - the page number to return
+
+### List and filter apprenticeships [GET]
+
 
 + Response 200 (application/json)
 
@@ -35,9 +46,7 @@ API to access data on UK apprenticeships and providers
 
 ### List, filter and extract fields from apprenticeships [POST]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+
 
 + Request (application/json)
 
