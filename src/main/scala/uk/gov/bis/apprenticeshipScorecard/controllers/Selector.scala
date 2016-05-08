@@ -27,6 +27,10 @@ object Selector {
   implicit val paramsR = Json.reads[Params]
 
 
+  /**
+    * Pimp out any `Iterable[T : Writes]` with a `.select` method that will use query `Params` to filter
+    * and project the collection.
+    */
   implicit class Select[T: Writes](ts: Iterable[T]) {
     def select[B](params: Params)(sortKey: (T) => B)(implicit ordering: Ordering[B]): SearchResults[JsValue] = {
       import params._
@@ -37,6 +41,6 @@ object Selector {
     }
   }
 
-  implicit val subjectW = Json.writes[Subject]
+
 
 }
