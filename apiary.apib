@@ -10,7 +10,7 @@ API to access data on UK apprenticeships and providers
 ### Retrieve details about a provider [GET /providers/{UKPRN}]
 
 + Parameters
-    + UKPRN (number) - ID of the provider
+    + UKPRN: 10000201 (number) - ID of the provider
 
 + Response 200 (application/json)
 
@@ -38,6 +38,7 @@ API to access data on UK apprenticeships and providers
 List the apprenticeships assocaited with a given provider, identified by the UKPRN. The list can be filtered using the query parameter.
 
 + Parameters
+    + UKPRN: 10000201 (number) - the id of the provider
     + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of apprenticeships
 
 + Response 200 (application/json)
