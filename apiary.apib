@@ -5,6 +5,91 @@ HOST: https://apprenticeship-scorecard-api.herokuapp.com/
 
 API to access data on UK apprenticeships and providers
 
+## Providers Collection [/providers]
+
+### Retrieve details about a provider [GET /providers/{UKPRN}]
+
++ Parameters
+    + UKPRN (number) - ID of the provider
+
++ Response 200 (application/json)
+
+        {
+            "ukprn": 10000201,
+            "name": "ALDER TRAINING LIMITED",
+            "provider_type": "Private Sector Public Funded",
+            "region": "North West",
+            "lea": "Liverpool",
+            "la": "Liverpool",
+            "address": {
+                "address1": "Alder House",
+                "address2": "Central Drive",
+                "town": "LIVERPOOL",
+                "county": "Merseyside",
+                "post_code": "L12 2AR",
+                "latitude": 53.423893,
+                "longitude": -2.904466
+            },
+            "website": "http://www.aldertraining.co.uk"
+        }
+        
+### List and filter apprenticeships for a providers [GET /providers/{UKPRN}/apprenticeships{?query}]
+
+List the apprenticeships assocaited with a given provider, identified by the UKPRN. The list can be filtered using the query parameter.
+
++ Parameters
+    + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of apprenticeships
+
++ Response 200 (application/json)
+
+        [
+            {
+                "subject_tier_2_code": 15.2,
+                "subject_tier_2_title": "Administration",
+                "learner_stats": {},
+                "description": "Administration",
+                "provider_id": 10000201,
+                "stats": {
+                    "success_rate": 78.7
+                },
+                "national_stats": {
+                    "success_rate": 72.1
+                },
+                "earnings": {},
+                "national_earnings": {},
+                "average_cost": 0
+            },
+            {
+                "subject_tier_2_code": 0,
+                "subject_tier_2_title": "All",
+                "learner_stats": {
+                    "satisfaction": 9.5,
+                    "national_satisfaction": 8.6,
+                    "age_under_19": 170,
+                    "age_19_to_24": 320,
+                    "age_25_plus": 650,
+                    "total": 1140
+                },
+                "description": "All",
+                "provider_id": 10000201,
+                "stats": {
+                    "success_rate": 81.7
+                },
+                "national_stats": {
+                    "success_rate": 68.9
+                },
+                "earnings": {
+                    "median": 19200,
+                    "proportion_above_21k": 0.32
+                },
+                "national_earnings": {
+                    "median": 18300,
+                    "proportion_above_21k": 0.35
+                },
+                "average_cost": 0
+            }
+        ]
+
 ## Apprenticeships Collection [/apprenticeships]
 
 List all (by default) apprenticeships in the data set. The results will be paged. The page size and page number can be set by the relevant optional parameters and the total number of results that are selected can be limited by the optional `max_results` parameter.
