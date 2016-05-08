@@ -1,4 +1,4 @@
-package apprenticeshipScorecard.tools
+package uk.gov.bis.apprenticeshipScorecard.tools
 
 import cats.data.Validated.{Invalid, Valid}
 import cats.data.{NonEmptyList, Validated, ValidatedNel}

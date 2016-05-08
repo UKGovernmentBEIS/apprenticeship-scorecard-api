@@ -1,6 +1,6 @@
-package apprenticeshipScorecard.tools
+package uk.gov.bis.apprenticeshipScorecard.tools
 
-import apprenticeshipScorecard.models.{Apprenticeship, Provider, SubjectCode, UKPRN}
+import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider, SubjectCode, UKPRN}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import cats.std.list._

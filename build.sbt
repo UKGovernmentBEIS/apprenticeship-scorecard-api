@@ -13,8 +13,7 @@ git.useGitDescribe := true
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9004")
 
-
-routesImport ++= Seq("apprenticeshipScorecard.bindings._", "com.wellfactored.restless.QueryAST.Query")
+routesImport ++= Seq("uk.gov.bis.apprenticeshipScorecard.bindings._", "com.wellfactored.restless.QueryAST.Query")
 
 libraryDependencies ++= Seq(
   ws,

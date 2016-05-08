@@ -1,4 +1,4 @@
-package apprenticeshipScorecard.controllers
+package uk.gov.bis.apprenticeshipScorecard.controllers
 
 case class PageNumber(num: Int) extends AnyVal
 

@@ -1,4 +1,4 @@
-package apprenticeshipScorecard
+package uk.gov.bis.apprenticeshipScorecard
 
 package object models {
 

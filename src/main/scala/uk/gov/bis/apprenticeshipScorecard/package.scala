@@ -1,4 +1,6 @@
-import apprenticeshipScorecard.models._
+package uk.gov.bis
+
+import uk.gov.bis.apprenticeshipScorecard.models._
 import play.api.libs.json._
 
 package object apprenticeshipScorecard {

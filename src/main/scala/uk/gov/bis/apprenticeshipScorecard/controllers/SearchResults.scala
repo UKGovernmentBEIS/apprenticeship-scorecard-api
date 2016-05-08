@@ -1,4 +1,4 @@
-package apprenticeshipScorecard.controllers
+package uk.gov.bis.apprenticeshipScorecard.controllers
 
 import play.api.libs.json._
 

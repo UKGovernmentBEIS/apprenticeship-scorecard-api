@@ -1,9 +1,9 @@
-package apprenticeshipScorecard.controllers
+package uk.gov.bis.apprenticeshipScorecard.controllers
 
-import apprenticeshipScorecard.bindings
-import apprenticeshipScorecard.tools.{Subject, TSVLoader}
 import com.wellfactored.restless.QueryAST.{Path, Query}
 import play.api.libs.json._
+import uk.gov.bis.apprenticeshipScorecard.bindings
+import uk.gov.bis.apprenticeshipScorecard.tools.Subject
 
 object Selector {
 
@@ -36,7 +36,6 @@ object Selector {
       SearchResults(page.resultsForPage, page.resultCount, page.currentPage.num, page.perPage.count)
     }
   }
-
 
   implicit val subjectW = Json.writes[Subject]
 

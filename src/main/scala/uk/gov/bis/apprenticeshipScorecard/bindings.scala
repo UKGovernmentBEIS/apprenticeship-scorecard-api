@@ -1,4 +1,4 @@
-package apprenticeshipScorecard
+package uk.gov.bis.apprenticeshipScorecard
 
 import atto.Atto._
 import atto.ParseResult.Done

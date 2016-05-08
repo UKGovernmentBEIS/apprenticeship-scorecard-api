@@ -1,6 +1,6 @@
-package apprenticeshipScorecard.tools
+package uk.gov.bis.apprenticeshipScorecard.tools
 
-import apprenticeshipScorecard.models.UKPRN
+import uk.gov.bis.apprenticeshipScorecard.models.UKPRN
 import cats.data.Validated.{Invalid, Valid}
 import org.scalatest.{FlatSpec, Matchers}
 

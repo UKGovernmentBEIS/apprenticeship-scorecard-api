@@ -1,9 +1,10 @@
 
-GET         /provider/:ukprn             apprenticeshipScorecard.controllers.ApiController.provider(ukprn:Long)
-GET         /subject/:subjectCode        apprenticeshipScorecard.controllers.ApiController.subject(subjectCode:BigDecimal)
+GET         /subject/:subjectCode                    uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.subject(subjectCode:BigDecimal)
 
-GET         /providers                   apprenticeshipScorecard.controllers.ApiController.providersGET(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], query:Option[Query])
-POST        /providers                   apprenticeshipScorecard.controllers.ApiController.providersPOST
+GET         /providers/:ukprn                        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.find(ukprn:Long)
+GET         /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.apprenticeships(ukprn:Long, page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
+GET         /providers                               uk.gov.bis.apprenticeshipScorecard.controllers.Providers.get(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
+POST        /providers                               uk.gov.bis.apprenticeshipScorecard.controllers.Providers.post
 
-GET         /apprenticeships             apprenticeshipScorecard.controllers.ApiController.apprenticeshipsGET(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], query:Option[Query])
-POST        /apprenticeships             apprenticeshipScorecard.controllers.ApiController.apprenticeshipsPOST
+GET         /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.get(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
+POST        /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.post

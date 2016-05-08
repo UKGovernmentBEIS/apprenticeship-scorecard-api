@@ -1,6 +1,6 @@
-package apprenticeshipScorecard.tools
+package uk.gov.bis.apprenticeshipScorecard.tools
 
-import apprenticeshipScorecard.models._
+import uk.gov.bis.apprenticeshipScorecard.models._
 import FieldExtractors._
 import cats.data.ValidatedNel
 import cats.syntax.cartesian._
