@@ -28,11 +28,4 @@ class Apprenticeships @Inject()(implicit ec: ExecutionContext) extends Controlle
   def post = Action(parse.json) { request =>
     jsonAction(request.body) { params: Params => dataStore.apprenticeships.select(params)(_.description) }
   }
-
-  def subject(subjectCode: BigDecimal) = Action { implicit request =>
-    dataStore.subjects.get(SubjectCode(subjectCode)) match {
-      case None => NotFound
-      case Some(p) => Ok(Json.toJson(p))
-    }
-  }
 }

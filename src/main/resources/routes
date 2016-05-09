@@ -1,5 +1,5 @@
 
-GET         /subject/:subjectCode                    uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.subject(subjectCode:BigDecimal)
+GET         /subject/:subjectCode                    uk.gov.bis.apprenticeshipScorecard.controllers.Subjects.subject(subjectCode:BigDecimal)
 
 GET         /providers/:ukprn                        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.find(ukprn:Long)
 GET         /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.apprenticeships(ukprn:Long, page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
