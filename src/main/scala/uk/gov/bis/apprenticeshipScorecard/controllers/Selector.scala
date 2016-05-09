@@ -24,8 +24,10 @@ object Selector {
                      query: Option[Query],
                      fields: Option[List[Path]])
 
-  implicit val paramsR = Json.reads[Params]
-
+  object Params {
+    val empty = Params(None, None, None, None, None)
+    implicit val paramsR = Json.reads[Params]
+  }
 
   /**
     * Pimp out any `Iterable[T : Writes]` with a `.select` method that will use query `Params` to filter
@@ -40,7 +42,6 @@ object Selector {
       SearchResults(page.resultsForPage, page.resultCount, page.currentPage.num, page.perPage.count)
     }
   }
-
 
 
 }

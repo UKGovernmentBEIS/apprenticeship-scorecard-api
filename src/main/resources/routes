@@ -6,5 +6,5 @@ GET         /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipSc
 GET         /providers                               uk.gov.bis.apprenticeshipScorecard.controllers.Providers.get(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
 POST        /providers                               uk.gov.bis.apprenticeshipScorecard.controllers.Providers.post
 
-GET         /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.get(page_number: Option[Int], page_size:Option[Int], max_results:Option[Int], q:Option[Query])
-POST        /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.post
+GET         /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.apprenticehships
+POST        /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.apprenticehships
