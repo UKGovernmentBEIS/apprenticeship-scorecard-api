@@ -2,7 +2,6 @@ package uk.gov.bis.apprenticeshipScorecard.controllers
 
 import javax.inject.Inject
 
-import com.wellfactored.restless.QueryAST.Query
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider, UKPRN}
@@ -10,7 +9,8 @@ import uk.gov.bis.apprenticeshipScorecard.tools.TSVLoader
 
 import scala.concurrent.ExecutionContext
 
-class Providers @Inject()(implicit ec: ExecutionContext) extends Controller{
+class Providers @Inject()(implicit ec: ExecutionContext) extends Controller {
+
   import Selector._
 
   implicit val providerFormat = Json.format[Provider]
@@ -25,21 +25,17 @@ class Providers @Inject()(implicit ec: ExecutionContext) extends Controller{
     }
   }
 
-  def apprenticeships(ukprn: Long, page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action { implicit request =>
-    val params = Params(page_number, page_size, max_results, q, None)
-    val results = dataStore.apprenticeships.filter(_.provider_id == UKPRN(ukprn))
-
-    Ok(Json.toJson(results))
+  def apprenticeships(ukprn: Long) = Action(parse.tolerantText) { implicit request =>
+    withCollectionParams { params =>
+      val results = dataStore.apprenticeships.filter(_.provider_id == UKPRN(ukprn)).select(params)(_.description)
+      Ok(Json.toJson(results))
+    }
   }
 
-  def get(page_number: Option[Int], page_size: Option[Int], max_results: Option[Int], q: Option[Query]) = Action {
-    val params = Params(page_number, page_size, max_results, q, None)
-    val results = dataStore.providers.values.select(params)(_.name)
-
-    Ok(Json.toJson(results))
-  }
-
-  def post = Action(parse.json) { request =>
-    jsonAction(request.body) { params: Params => dataStore.providers.values.select(params)(_.name) }
+  def providers = Action(parse.tolerantText) { implicit request =>
+    withCollectionParams { params =>
+      val results = dataStore.providers.values.select(params)(_.name)
+      Ok(Json.toJson(results))
+    }
   }
 }
