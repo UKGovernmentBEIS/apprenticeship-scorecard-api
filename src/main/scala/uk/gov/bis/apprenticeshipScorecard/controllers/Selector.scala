@@ -3,7 +3,6 @@ package uk.gov.bis.apprenticeshipScorecard.controllers
 import com.wellfactored.restless.QueryAST.{Path, Query}
 import play.api.libs.json._
 import uk.gov.bis.apprenticeshipScorecard.bindings
-import uk.gov.bis.apprenticeshipScorecard.tools.Subject
 
 object Selector {
 

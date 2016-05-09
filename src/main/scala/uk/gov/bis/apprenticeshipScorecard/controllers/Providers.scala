@@ -5,7 +5,7 @@ import javax.inject.Inject
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
 import uk.gov.bis.apprenticeshipScorecard.ApiActions.Collection
-import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider, UKPRN}
+import uk.gov.bis.apprenticeshipScorecard.models.UKPRN
 import uk.gov.bis.apprenticeshipScorecard.tools.TSVLoader
 
 import scala.concurrent.ExecutionContext
@@ -13,10 +13,6 @@ import scala.concurrent.ExecutionContext
 class Providers @Inject()(implicit ec: ExecutionContext) extends Controller {
 
   import Selector._
-
-  implicit val providerFormat = Json.format[Provider]
-  implicit val apprenticeshipFormat = Json.format[Apprenticeship]
-
   import TSVLoader.dataStore
 
   def find(ukprn: Long) = Action { implicit request =>
