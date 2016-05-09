@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
-import uk.gov.bis.apprenticeshipScorecard.ApiActions.Collection
+import uk.gov.bis.apprenticeshipScorecard.actions.ApiActions.Collection
 import uk.gov.bis.apprenticeshipScorecard.models.UKPRN
 import uk.gov.bis.apprenticeshipScorecard.tools.TSVLoader
 

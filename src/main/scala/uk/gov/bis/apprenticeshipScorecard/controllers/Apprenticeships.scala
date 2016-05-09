@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import play.api.libs.json._
 import play.api.mvc._
-import uk.gov.bis.apprenticeshipScorecard.ApiActions.Collection
+import uk.gov.bis.apprenticeshipScorecard.actions.ApiActions.Collection
 import uk.gov.bis.apprenticeshipScorecard.tools.TSVLoader
 
 import scala.concurrent.ExecutionContext

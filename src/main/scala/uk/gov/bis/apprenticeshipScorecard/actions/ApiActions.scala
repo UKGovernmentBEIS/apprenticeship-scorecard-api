@@ -1,4 +1,4 @@
-package uk.gov.bis.apprenticeshipScorecard
+package uk.gov.bis.apprenticeshipScorecard.actions
 
 import atto.ParseResult.Done
 import com.wellfactored.restless.QueryAST.Path
