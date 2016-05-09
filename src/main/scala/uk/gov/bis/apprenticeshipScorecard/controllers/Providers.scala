@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
+import uk.gov.bis.apprenticeshipScorecard.ApiActions.Collection
 import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider, UKPRN}
 import uk.gov.bis.apprenticeshipScorecard.tools.TSVLoader
 
@@ -25,17 +26,12 @@ class Providers @Inject()(implicit ec: ExecutionContext) extends Controller {
     }
   }
 
-  def apprenticeships(ukprn: Long) = Action(parse.tolerantText) { implicit request =>
-    withCollectionParams { params =>
-      val results = dataStore.apprenticeships.filter(_.provider_id == UKPRN(ukprn)).select(params)(_.description)
-      Ok(Json.toJson(results))
-    }
+  def apprenticeships(ukprn: Long) = Collection { implicit request =>
+    val results = dataStore.apprenticeships.filter(_.provider_id == UKPRN(ukprn)).select(request.params)(_.description)
+    Ok(Json.toJson(results))
   }
 
-  def providers = Action(parse.tolerantText) { implicit request =>
-    withCollectionParams { params =>
-      val results = dataStore.providers.values.select(params)(_.name)
-      Ok(Json.toJson(results))
-    }
+  def providers = Collection { implicit request =>
+    Ok(Json.toJson(dataStore.providers.values.select(request.params)(_.name)))
   }
 }

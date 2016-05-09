@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 import play.api.libs.json._
 import play.api.mvc._
+import uk.gov.bis.apprenticeshipScorecard.ApiActions.Collection
 import uk.gov.bis.apprenticeshipScorecard.models._
 import uk.gov.bis.apprenticeshipScorecard.tools.TSVLoader
 
@@ -18,8 +19,8 @@ class Apprenticeships @Inject()(implicit ec: ExecutionContext) extends Controlle
 
   import TSVLoader.dataStore
 
-  def apprenticehships = Action(parse.tolerantText) { implicit request =>
-    withCollectionParams(params => Ok(Json.toJson(dataStore.apprenticeships.select(params)(_.description))))
+  def apprenticehships = Collection { implicit request =>
+    Ok(Json.toJson(dataStore.apprenticeships.select(request.params)(_.description)))
   }
 
 }
