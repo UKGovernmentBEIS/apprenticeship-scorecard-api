@@ -24,8 +24,6 @@ object bindings {
   }
 
   implicit val queryBinding = new QueryStringBindable[QueryAST.Query] {
-
-
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Query]] = {
       params.get(key).map { qs =>
         QueryParser.query.parseOnly(qs.headOption.getOrElse("")) match {
@@ -40,8 +38,6 @@ object bindings {
 
 
   implicit val queryR = new Reads[Query] {
-
-
     override def reads(json: JsValue): JsResult[Query] = {
       implicitly[Reads[String]].reads(json).flatMap { qs =>
         QueryParser.query.parseOnly(qs) match {
