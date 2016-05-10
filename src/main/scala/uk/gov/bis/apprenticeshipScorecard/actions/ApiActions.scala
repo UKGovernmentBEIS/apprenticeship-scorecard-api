@@ -3,9 +3,10 @@ package uk.gov.bis.apprenticeshipScorecard.actions
 import atto.ParseResult.Done
 import com.wellfactored.restless.QueryAST.Path
 import com.wellfactored.restless.QueryParser
-import play.api.libs.json.{JsArray, Json}
+import play.api.libs.json.{JsArray, Json, Writes}
 import play.api.mvc.Results._
 import play.api.mvc._
+import uk.gov.bis.apprenticeshipScorecard.controllers.Selector
 import uk.gov.bis.apprenticeshipScorecard.controllers.Selector.Params
 
 import scala.util.Try
@@ -14,6 +15,12 @@ import scala.util.control.NonFatal
 class CollectionRequest(val request: Request[String], val params: Params) extends WrappedRequest[String](request)
 
 object ApiActions extends BodyParsers {
+
+  def Collect[T: Writes, B](xs: => Iterable[T])(sortKey: (T) => B)(implicit ordering: Ordering[B]): Action[String] = Collection { implicit request =>
+    import Selector._
+    Ok(Json.toJson(xs.select(request.params)(sortKey)))
+  }
+
   def Collection(f: CollectionRequest => Result): Action[String] = Action(parse.tolerantText) { implicit request =>
     withCollectionParams(params => f(new CollectionRequest(request, params)))
   }
