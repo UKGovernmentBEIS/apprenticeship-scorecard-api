@@ -3,8 +3,8 @@ package uk.gov.bis.apprenticeshipScorecard.controllers
 import javax.inject.Inject
 
 import play.api.mvc._
-import uk.gov.bis.apprenticeshipScorecard.actions.ApiActions.Collect
 import uk.gov.bis.apprenticeshipScorecard.tools.TSVLoader
+import com.wellfactored.restless.play.actions.ApiActions.Collect
 
 import scala.concurrent.ExecutionContext
 

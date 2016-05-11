@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import play.api.libs.json.Json
 import play.api.mvc.{Action, Controller}
-import uk.gov.bis.apprenticeshipScorecard.actions.ApiActions._
+import com.wellfactored.restless.play.actions.ApiActions.Collect
 import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider, UKPRN}
 import uk.gov.bis.apprenticeshipScorecard.tools.TSVLoader
 
