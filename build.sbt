@@ -13,14 +13,14 @@ git.useGitDescribe := true
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9004")
 
-routesImport ++= Seq("uk.gov.bis.apprenticeshipScorecard.bindings._", "com.wellfactored.restless.QueryAST.Query")
+routesImport ++= Seq("uk.gov.bis.apprenticeshipScorecard.bindings._")
 
 libraryDependencies ++= Seq(
   ws,
   "joda-time" % "joda-time" % "2.7",
   "org.joda" % "joda-convert" % "1.7",
   "org.typelevel" %% "cats" % "0.4.1",
-  "com.wellfactored" %% "restless-play-json" % "0.2.0",
+  "com.wellfactored" %% "restless" % "0.2.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0-RC1" % Test
 )
 
