@@ -1,10 +1,16 @@
 package uk.gov.bis.apprenticeshipScorecard
 
+import com.wellfactored.playbindings.SimpleWrapper
+
 package object models {
 
   case class UKPRN(id: Long) extends AnyVal
 
+  object UKPRN extends SimpleWrapper[Long, UKPRN]
+
   case class SubjectCode(code: BigDecimal) extends AnyVal
+
+  object SubjectCode extends SimpleWrapper[BigDecimal, SubjectCode]
 
   case class LearnerStats(
                            satisfaction: Option[BigDecimal],
