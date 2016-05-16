@@ -17,14 +17,14 @@ class Providers @Inject()(implicit ec: ExecutionContext) extends Controller {
 
   import TSVLoader.dataStore
 
-  def find(ukprn: Long) = Action { implicit request =>
-    dataStore.providers.get(UKPRN(ukprn)) match {
+  def find(ukprn: UKPRN) = Action { implicit request =>
+    dataStore.providers.get(ukprn) match {
       case None => NotFound
       case Some(p) => Ok(Json.toJson(p))
     }
   }
 
-  def apprenticeships(ukprn: Long) = Collect(dataStore.apprenticeships.filter(_.provider_id == UKPRN(ukprn)))(_.description)
+  def apprenticeships(ukprn: UKPRN) = Collect(dataStore.apprenticeships.filter(_.provider_id == ukprn))(_.description)
 
   def providers = Collect(dataStore.providers.values)(_.name)
 }

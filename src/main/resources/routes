@@ -1,9 +1,9 @@
 
-GET         /subject/:subjectCode                    uk.gov.bis.apprenticeshipScorecard.controllers.Subjects.subject(subjectCode:BigDecimal)
+GET         /subject/:subjectCode                    uk.gov.bis.apprenticeshipScorecard.controllers.Subjects.subject(subjectCode:SubjectCode)
 
-GET         /providers/:ukprn                        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.find(ukprn:Long)
-GET         /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.apprenticeships(ukprn:Long)
-POST        /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.apprenticeships(ukprn:Long)
+GET         /providers/:ukprn                        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.find(ukprn:UKPRN)
+GET         /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.apprenticeships(ukprn:UKPRN)
+POST        /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.apprenticeships(ukprn:UKPRN)
 
 GET         /providers                               uk.gov.bis.apprenticeshipScorecard.controllers.Providers.providers
 POST        /providers                               uk.gov.bis.apprenticeshipScorecard.controllers.Providers.providers

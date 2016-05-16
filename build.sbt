@@ -13,7 +13,7 @@ git.useGitDescribe := true
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9004")
 
-routesImport ++= Seq("uk.gov.bis.apprenticeshipScorecard.bindings._")
+routesImport ++= Seq("uk.gov.bis.apprenticeshipScorecard.models._","uk.gov.bis.apprenticeshipScorecard.bindings._")
 
 libraryDependencies ++= Seq(
   ws,

@@ -13,8 +13,8 @@ class Subjects @Inject()(implicit ec: ExecutionContext) extends Controller {
 
   import TSVLoader.dataStore
 
-  def subject(subjectCode: BigDecimal) = Action { implicit request =>
-    dataStore.subjects.get(SubjectCode(subjectCode)) match {
+  def subject(subjectCode: SubjectCode) = Action { implicit request =>
+    dataStore.subjects.get(subjectCode) match {
       case None => NotFound
       case Some(p) => Ok(Json.toJson(p))
     }
