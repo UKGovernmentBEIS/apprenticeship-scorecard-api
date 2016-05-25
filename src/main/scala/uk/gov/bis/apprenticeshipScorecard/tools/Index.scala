@@ -7,14 +7,13 @@ trait Index[T] {
     * Match a single word against the index
     *
     * @param word the word to match
-    * @return a set of matching entries
+    * @return a set of entries with a matching rank
     */
-  def lookup(word: String): Set[T]
+  def lookup(word: String): Seq[Ranked[T]]
 
-  def matchPhrase(phrase: String): Set[T] =
-    phrase.trim.split("\\s").foldLeft(Set[T]()) { case (results, word) =>
-      results ++ lookup(word)
-    }
+  def matchPhrase(phrase: String): Seq[Ranked[T]] = for {
+    (k, vs) <- phrase.trim.split("\\s").toList.flatMap(lookup).groupBy(_.item).toSeq
+  } yield Ranked(k, vs.map(_.rank).sum)
 }
 
 case class Ranked[T](item: T, rank: Double)
@@ -22,19 +21,24 @@ case class Ranked[T](item: T, rank: Double)
 object ProviderIndex extends ProviderIndex(TSVLoader.dataStore)
 
 class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
-  override def lookup(s: String): Set[Provider] = index.lookup(s).flatMap(prn => dataStore.providers.get(prn))
+  override def lookup(s: String): Seq[Ranked[Provider]] = for {
+    rankedPrn <- index.lookup(s)
+    provider <- dataStore.providers.get(rankedPrn.item)
+  } yield Ranked(provider, rankedPrn.rank)
 
   lazy val index: Index[UKPRN] = {
     val (keywordMap, codeMap) = extractMaps
 
     new Index[UKPRN] {
       // Not the most efficient implementation, but good enough for the 800-odd providers in our data set
-      override def lookup(word: String): Set[UKPRN] = {
+      override def lookup(word: String): Seq[Ranked[UKPRN]] = {
         if (word.trim() != "") {
-          val wordMatches = keywordMap.keys.filter(_.startsWith(word.trim())).flatMap(keywordMap(_))
-          val codeMatches = codeMap.keys.filter(_ == word.trim()).flatMap(codeMap(_))
-          (wordMatches ++ codeMatches).toSet
-        } else Set()
+          val wordMatches = keywordMap.keys.filter(_.startsWith(word.trim())).flatMap { key =>
+            keywordMap(key).map(prn => Ranked(prn, 1.0 + word.trim().length.toDouble / key.length))
+          }
+          val codeMatches = codeMap.keys.filter(_ == word.trim()).flatMap(codeMap(_).map(prn => Ranked(prn, 2.0)))
+          (wordMatches ++ codeMatches).toSeq
+        } else Seq()
       }
     }
   }
@@ -59,6 +63,4 @@ class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
       alreadyMerged ++ stringToUkprn.map { case (k, v) => k -> alreadyMerged.get(k).map(_ + v).getOrElse(Set(v)) }
     }
   }
-
-
 }

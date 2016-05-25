@@ -34,10 +34,16 @@ class ProviderIndexSpec extends FlatSpec with Matchers {
   }
 
   it should "match the start of a provider name" in {
-    ProviderIndex.lookup("WOOD").size shouldBe 1
+    val result = ProviderIndex.lookup("WOOD")
+    result.size shouldBe 1
+    result.head.rank - 1.4444 should be < 0.1
   }
 
   it should "match two provider names" in {
-    ProviderIndex.matchPhrase("WOOD ABING").size shouldBe 2
+    val results = ProviderIndex.matchPhrase("WOOD ACCESS MUSIC")
+    results.size shouldBe 5
+
+    results.find(_.item.name == "ACCESS TO MUSIC LIMITED").map(_.rank).get  shouldBe 4.0
   }
+
 }
