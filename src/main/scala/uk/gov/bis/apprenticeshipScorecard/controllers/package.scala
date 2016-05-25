@@ -3,6 +3,7 @@ package uk.gov.bis.apprenticeshipScorecard
 import play.api.libs.json._
 import play.api.mvc.Result
 import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider}
+import uk.gov.bis.apprenticeshipScorecard.tools.Ranked
 
 package object controllers {
 
@@ -16,5 +17,15 @@ package object controllers {
       invalid => BadRequest("bad parameter format"),
       t => Ok(Json.toJson(body(t)))
     )
+  }
+
+  implicit def formats[T: Writes] = new Writes[Ranked[T]] {
+    override def writes(o: Ranked[T]): JsValue = {
+      val resultsJson = Json.toJson(o.item)
+      JsObject(Map(
+        "item" -> Json.toJson(o.item),
+        "rank" -> JsNumber(o.rank)
+      ))
+    }
   }
 }

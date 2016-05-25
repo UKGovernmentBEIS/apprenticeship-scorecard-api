@@ -32,11 +32,12 @@ class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
     new Index[UKPRN] {
       // Not the most efficient implementation, but good enough for the 800-odd providers in our data set
       override def lookup(word: String): Seq[Ranked[UKPRN]] = {
-        if (word.trim() != "") {
-          val wordMatches = keywordMap.keys.filter(_.startsWith(word.trim())).flatMap { key =>
-            keywordMap(key).map(prn => Ranked(prn, 1.0 + word.trim().length.toDouble / key.length))
+        val searchWord = word.trim().toLowerCase
+        if (searchWord != "") {
+          val wordMatches = keywordMap.keys.filter(_.startsWith(searchWord)).flatMap { key =>
+            keywordMap(key).map(prn => Ranked(prn, 1.0 + searchWord.length.toDouble / key.length))
           }
-          val codeMatches = codeMap.keys.filter(_ == word.trim()).flatMap(codeMap(_).map(prn => Ranked(prn, 2.0)))
+          val codeMatches = codeMap.keys.filter(_ == searchWord).flatMap(codeMap(_).map(prn => Ranked(prn, 2.0)))
           (wordMatches ++ codeMatches).toSeq
         } else Seq()
       }
@@ -49,7 +50,7 @@ class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
         (a.subject_tier_2_code, a.subject_tier_2_title)
       }.toList.distinct
 
-      val keywords = provider.name.split("\\s") ++ subjects.flatMap(_._2.split("\\s"))
+      val keywords = provider.name.split("\\s").map(_.trim.toLowerCase) ++ subjects.flatMap(_._2.split("\\s").map(_.trim.toLowerCase))
       val codes = subjects.map(_._1)
 
       (Map(keywords.map(k => k -> provider.ukprn): _*), Map(codes.map(code => code.code.toString -> provider.ukprn): _*))
