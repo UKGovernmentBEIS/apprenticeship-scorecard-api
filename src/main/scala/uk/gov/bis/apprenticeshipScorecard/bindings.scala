@@ -21,6 +21,6 @@ object bindings {
   }
 
   implicit val ukprnBinding = PlayBindings[Long, UKPRN]().pathBindable
-  implicit val subjecyCodeBinding = PlayBindings[BigDecimal, SubjectCode]().pathBindable
+  implicit val subjectCodeBinding = PlayBindings[BigDecimal, SubjectCode]().pathBindable
 
 }
