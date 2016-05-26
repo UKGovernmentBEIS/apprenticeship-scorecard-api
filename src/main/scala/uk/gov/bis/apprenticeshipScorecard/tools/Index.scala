@@ -11,9 +11,22 @@ trait Index[T] {
     */
   def lookup(word: String): Seq[Ranked[T]]
 
-  def matchPhrase(phrase: String): Seq[Ranked[T]] = for {
-    (k, vs) <- phrase.trim.split("\\s").toList.flatMap(lookup).groupBy(_.item).toSeq
-  } yield Ranked(k, vs.map(_.rank).sum)
+  /**
+    * Find entries that (at least partially) match *all* the words in the
+    * phrase
+    */
+  def matchPhrase(phrase: String): Seq[Ranked[T]] = {
+    val resultSets = phrase.trim.split("\\s").toList.map(lookup)
+
+    // find items that are in all the result sets
+    val matches = resultSets.foldLeft(resultSets.flatten) { case (remainingResults, resultSet) =>
+      remainingResults.filter(r => resultSet.exists(_.item == r.item))
+    }
+
+    for {
+      (k, vs) <- matches.groupBy(_.item).toSeq
+    } yield Ranked(k, vs.map(_.rank).sum)
+  }
 }
 
 case class Ranked[T](item: T, rank: Double)
