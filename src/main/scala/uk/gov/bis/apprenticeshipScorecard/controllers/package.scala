@@ -21,11 +21,8 @@ package object controllers {
 
   implicit def formats[T: Writes] = new Writes[Ranked[T]] {
     override def writes(o: Ranked[T]): JsValue = {
-      val resultsJson = Json.toJson(o.item)
-      JsObject(Map(
-        "item" -> Json.toJson(o.item),
-        "rank" -> JsNumber(o.rank)
-      ))
+      val resultsJson = Json.toJson(o.item).as[JsObject]
+      resultsJson.+("search_rank" -> JsNumber(o.rank))
     }
   }
 }
