@@ -112,7 +112,7 @@ Each result will have a "search rank" associated with it that indicates how clos
 The search also supports the querying and field-extraction features of the "[GET /providers]" endpoint.
 
 + Parameters
-    + phrase: a string of one ore more words, space separated, that will be used to match against providers
+    + phrase: "acc music" (string, optional) - a string of one ore more words, space separated, that will be used to match against providers
     + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of providers
     + fields: ["stats.success_rate", "national_stats.success_rate"] (string, optional) - an array of paths referencing fields that should be included in the json output.
     + max_results: 500 (number, optional) - limit the number of apprenticeships that are selected. If note specified then all matching results will be selected.
@@ -126,80 +126,24 @@ The search also supports the querying and field-extraction features of the "[GET
         {
             "results": [
                 {
-                    "item": {
-                        "ukprn": 10000080,
-                        "name": "ACCESS TO MUSIC LIMITED",
-                        "provider_type": "Private Sector Public Funded",
-                        "region": "West Midlands",
-                        "lea": "Birmingham",
-                        "la": "Birmingham",
-                        "address": {
-                            "address1": "9 centres across the UK",
-                            "town": "Birmingham",
-                            "post_code": "B9 4AR",
-                            "latitude": 52.476623,
-                            "longitude": -1.88257
-                        },
-                        "website": "http://www.accesstomusic.ac.uk"
+                    "ukprn": 10000080,
+                    "name": "ACCESS TO MUSIC LIMITED",
+                    "provider_type": "Private Sector Public Funded",
+                    "region": "West Midlands",
+                    "lea": "Birmingham",
+                    "la": "Birmingham",
+                    "address": {
+                        "address1": "9 centres across the UK",
+                        "town": "Birmingham",
+                        "post_code": "B9 4AR",
+                        "latitude": 52.476623,
+                        "longitude": -1.88257
                     },
-                    "rank": 4
-                },
-                {
-                    "item": {
-                        "ukprn": 10009059,
-                        "name": "ACCESS TRAINING LIMITED",
-                        "provider_type": "Private Sector Public Funded",
-                        "region": "North East",
-                        "lea": "Gateshead",
-                        "la": "Gateshead",
-                        "address": {
-                            "address1": "Gateshead Skills Academy",
-                            "address2": "Team Valley",
-                            "town": "GATESHEAD",
-                            "county": "NORTH EAST ENGLAND",
-                            "post_code": "NE11 0JL",
-                            "latitude": 54.928234,
-                            "longitude": -1.618067
-                        },
-                        "website": "http://www.accesstraining.org"
-                    },
-                    "rank": 2
-                },
-                {
-                    "item": {
-                        "ukprn": 10031419,
-                        "name": "ACADEMY OF MUSIC & SOUND LTD",
-                        "provider_type": "Private Sector Public Funded",
-                        "region": "South West",
-                        "lea": "Devon",
-                        "la": "South Hams",
-                        "address": {}
-                    },
-                    "rank": 2
-                },
-                {
-                    "item": {
-                        "ukprn": 10010584,
-                        "name": "ACCESS TRAINING (EAST MIDLANDS) LTD",
-                        "provider_type": "Private Sector Public Funded",
-                        "region": "East Midlands",
-                        "lea": "Nottingham",
-                        "la": "Nottingham",
-                        "address": {
-                            "address1": "Cawley House",
-                            "address2": "96 Cliff Road",
-                            "town": "Nottingham",
-                            "county": "Nottinghamshire",
-                            "post_code": "NG1 1GW",
-                            "latitude": 52.949952,
-                            "longitude": -1.14176
-                        },
-                        "website": "http://www.atem.co.uk"
-                    },
-                    "rank": 2
+                    "website": "http://www.accesstomusic.ac.uk",
+                    "search_rank": 3.5
                 }
             ],
-            "total_results": 4,
+            "total_results": 1,
             "page_number": 1,
             "items_per_page": 50
         }
