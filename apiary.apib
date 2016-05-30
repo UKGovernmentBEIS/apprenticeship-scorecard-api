@@ -33,6 +33,177 @@ API to access data on UK apprenticeships and providers
             "website": "http://www.aldertraining.co.uk"
         }
         
+### List and filter providers [GET /providers{?query}{?fields}{?max_results}{?page_size}{?page_number}]
+
+List all (by default) providers in the data set. The results will be paged. The page size and page number can be set by the relevant optional parameters and the total number of results that are selected can be limited by the optional `max_results` parameter.
+
+You can use a query to select results that match specific conditions. The query language is simple, but quite powerful. You can reference fields from the json result using dotted paths (e.g. `description` or `learner_stats.satisfaction`), compare strings (`=`, `!=`, `starts with`, `ends with` and `contains`) and compare numbers `=`, `!=`, `>`, `<`, `>=` and `<=`). Here are some examples:
+
++ Parameters
+    + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of providers
+    + fields: ["stats.success_rate", "national_stats.success_rate"] (string, optional) - an array of paths referencing fields that should be included in the json output.
+    + max_results: 500 (number, optional) - limit the number of apprenticeships that are selected. If note specified then all matching results will be selected.
+    + page_size (number, optional) - limit the number of apprenticeships that are returned in a page
+        + Default: 50
+    + page_number (number, optional) - the page number to return
+        + Default: 1
+        
++ Response 200 (application/json)
+
+        [
+            {
+                "subject_tier_2_code": 15.2,
+                "subject_tier_2_title": "Administration",
+                "learner_stats": {},
+                "description": "Administration",
+                "provider_id": 10000201,
+                "stats": {
+                    "success_rate": 78.7
+                },
+                "national_stats": {
+                    "success_rate": 72.1
+                },
+                "earnings": {},
+                "national_earnings": {},
+                "average_cost": 0
+            },
+            {
+                "subject_tier_2_code": 0,
+                "subject_tier_2_title": "All",
+                "learner_stats": {
+                    "satisfaction": 9.5,
+                    "national_satisfaction": 8.6,
+                    "age_under_19": 170,
+                    "age_19_to_24": 320,
+                    "age_25_plus": 650,
+                    "total": 1140
+                },
+                "description": "All",
+                "provider_id": 10000201,
+                "stats": {
+                    "success_rate": 81.7
+                },
+                "national_stats": {
+                    "success_rate": 68.9
+                },
+                "earnings": {
+                    "median": 19200,
+                    "proportion_above_21k": 0.32
+                },
+                "national_earnings": {
+                    "median": 18300,
+                    "proportion_above_21k": 0.35
+                },
+                "average_cost": 0
+            }
+        ]
+
+### Search the set of providers [GET /providers/search{?phrase}{?query}{?fields}{?max_results}{?page_size}{?page_number}]
+
+Search the set of providers using one or more words. The results will include providers that match *all* the words in the phrase.
+
+The matching is carried out as follows:
+
+* A word in the phrase can match the start of or all of a word in the name of the provider, or in the subject description of any apprenticeship course that the provider offers
+* A word in the phrase exactly matches the subject code (e.g. "15.1") of any apprenticeship course that the provider offers
+ 
+Each result will have a "search rank" associated with it that indicates how close a match it was. Results will be sorted by highest rank first.
+
+The search also supports the querying and field-extraction features of the "[GET /providers]" endpoint.
+
++ Parameters
+    + phrase: a string of one ore more words, space separated, that will be used to match against providers
+    + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of providers
+    + fields: ["stats.success_rate", "national_stats.success_rate"] (string, optional) - an array of paths referencing fields that should be included in the json output.
+    + max_results: 500 (number, optional) - limit the number of apprenticeships that are selected. If note specified then all matching results will be selected.
+    + page_size (number, optional) - limit the number of apprenticeships that are returned in a page
+        + Default: 50
+    + page_number (number, optional) - the page number to return
+        + Default: 1
+        
++ Response 200 (application/json)
+
+        {
+            "results": [
+                {
+                    "item": {
+                        "ukprn": 10000080,
+                        "name": "ACCESS TO MUSIC LIMITED",
+                        "provider_type": "Private Sector Public Funded",
+                        "region": "West Midlands",
+                        "lea": "Birmingham",
+                        "la": "Birmingham",
+                        "address": {
+                            "address1": "9 centres across the UK",
+                            "town": "Birmingham",
+                            "post_code": "B9 4AR",
+                            "latitude": 52.476623,
+                            "longitude": -1.88257
+                        },
+                        "website": "http://www.accesstomusic.ac.uk"
+                    },
+                    "rank": 4
+                },
+                {
+                    "item": {
+                        "ukprn": 10009059,
+                        "name": "ACCESS TRAINING LIMITED",
+                        "provider_type": "Private Sector Public Funded",
+                        "region": "North East",
+                        "lea": "Gateshead",
+                        "la": "Gateshead",
+                        "address": {
+                            "address1": "Gateshead Skills Academy",
+                            "address2": "Team Valley",
+                            "town": "GATESHEAD",
+                            "county": "NORTH EAST ENGLAND",
+                            "post_code": "NE11 0JL",
+                            "latitude": 54.928234,
+                            "longitude": -1.618067
+                        },
+                        "website": "http://www.accesstraining.org"
+                    },
+                    "rank": 2
+                },
+                {
+                    "item": {
+                        "ukprn": 10031419,
+                        "name": "ACADEMY OF MUSIC & SOUND LTD",
+                        "provider_type": "Private Sector Public Funded",
+                        "region": "South West",
+                        "lea": "Devon",
+                        "la": "South Hams",
+                        "address": {}
+                    },
+                    "rank": 2
+                },
+                {
+                    "item": {
+                        "ukprn": 10010584,
+                        "name": "ACCESS TRAINING (EAST MIDLANDS) LTD",
+                        "provider_type": "Private Sector Public Funded",
+                        "region": "East Midlands",
+                        "lea": "Nottingham",
+                        "la": "Nottingham",
+                        "address": {
+                            "address1": "Cawley House",
+                            "address2": "96 Cliff Road",
+                            "town": "Nottingham",
+                            "county": "Nottinghamshire",
+                            "post_code": "NG1 1GW",
+                            "latitude": 52.949952,
+                            "longitude": -1.14176
+                        },
+                        "website": "http://www.atem.co.uk"
+                    },
+                    "rank": 2
+                }
+            ],
+            "total_results": 4,
+            "page_number": 1,
+            "items_per_page": 50
+        }
+        
 ### List and filter apprenticeships for a providers [GET /providers/{UKPRN}/apprenticeships{?query}]
 
 List the apprenticeships assocaited with a given provider, identified by the UKPRN. The list can be filtered using the query parameter.
