@@ -2,11 +2,11 @@ package uk.gov.bis.apprenticeshipScorecard.controllers
 
 import javax.inject.Inject
 
-import play.api.libs.json.Json
+import com.wellfactored.restless.play.actions.ApiActions._
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, Controller}
-import com.wellfactored.restless.play.actions.ApiActions.Collect
 import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider, UKPRN}
-import uk.gov.bis.apprenticeshipScorecard.tools.{ProviderIndex, Ranked, TSVLoader}
+import uk.gov.bis.apprenticeshipScorecard.tools.{ProviderIndex, TSVLoader}
 
 import scala.concurrent.ExecutionContext
 
@@ -24,9 +24,9 @@ class Providers @Inject()(implicit ec: ExecutionContext) extends Controller {
     }
   }
 
-  def search(phrase: String) = Collect(ProviderIndex.matchPhrase(phrase))(p => -p.rank)
+  def search(phrase: String) = JsCollect(ProviderIndex.matchPhrase(phrase).sortBy(_.rank).map(Json.toJson(_).as[JsObject]))
 
-  def apprenticeships(ukprn: UKPRN) = Collect(dataStore.apprenticeships.filter(_.provider_id == ukprn))(_.description)
+  def apprenticeships(ukprn: UKPRN) = JsCollect(dataStore.apprenticeships.filter(_.provider_id == ukprn).sortBy(_.description).map(Json.toJson(_).as[JsObject]))
 
-  def providers = Collect(dataStore.providers.values)(_.name)
+  def providers = JsCollect(dataStore.providersJs)
 }

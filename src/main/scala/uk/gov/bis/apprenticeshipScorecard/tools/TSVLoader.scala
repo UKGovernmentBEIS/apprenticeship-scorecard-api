@@ -4,6 +4,7 @@ import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider, Subj
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import cats.std.list._
+import play.api.libs.json.{JsObject, Json}
 
 import scala.io.Source
 
@@ -14,7 +15,10 @@ case class DataStore(
                       apprenticeships: Seq[Apprenticeship],
                       subjects: Map[SubjectCode, Subject],
                       errors: Seq[(Int, String)]
-                    )
+                    ) {
+  lazy val apprenticeshipsJs = apprenticeships.sortBy(_.description).map(Json.toJson(_).as[JsObject])
+  lazy val providersJs = providers.values.toSeq.sortBy(_.ukprn.id).map(Json.toJson(_).as[JsObject])
+}
 
 object TSVLoader {
 
