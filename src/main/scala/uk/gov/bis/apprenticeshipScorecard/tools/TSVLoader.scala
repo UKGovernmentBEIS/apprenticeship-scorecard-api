@@ -20,6 +20,10 @@ case class DataStore(
   lazy val providersJs = providers.values.toSeq.sortBy(_.ukprn.id).map(Json.toJson(_).as[JsObject])
 }
 
+object DataStore {
+  val empty = DataStore(Map(), Seq(), Map(), Seq())
+}
+
 object TSVLoader {
 
   val fileName = "data/Scorecard_Analysis_Data_For_Site_v4_fictional.tsv"
@@ -40,10 +44,13 @@ object TSVLoader {
 
   def loadFromSource(source: Source): DataStore = {
     val lines = source.getLines.toList
-    val colNames = lines.head.split("\t").toList
+    val ds = lines.headOption.map(_.split("\t").toList) match {
+      case None => DataStore.empty
+      case Some(colNames) => processData(lines, colNames)
+    }
 
-    val ds = processData(lines, colNames)
     source.close()
+
     ds
   }
 

@@ -1,10 +1,8 @@
 package uk.gov.bis.apprenticeshipScorecard
 
 import com.wellfactored.playbindings.PlayBindings
-import play.api.libs.json.{Json, Writes}
 import play.api.mvc.PathBindable
 import uk.gov.bis.apprenticeshipScorecard.models.{SubjectCode, UKPRN}
-import uk.gov.bis.apprenticeshipScorecard.tools.Ranked
 
 import scala.util.Try
 
@@ -24,7 +22,4 @@ object bindings {
 
   implicit val ukprnBinding = PlayBindings[Long, UKPRN]().pathBindable
   implicit val subjectCodeBinding = PlayBindings[BigDecimal, SubjectCode]().pathBindable
-
-
-
 }

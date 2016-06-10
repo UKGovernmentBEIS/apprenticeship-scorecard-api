@@ -1,9 +1,9 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, Matchers, OptionValues}
 import uk.gov.bis.apprenticeshipScorecard.models.UKPRN
 
-class ProviderIndexSpec extends FlatSpec with Matchers {
+class ProviderIndexSpec extends FlatSpec with Matchers with OptionValues {
 
   "mergeMaps" should "correctly merge a single map" in {
     ProviderIndex.mergeMaps(Seq(Map("foo" -> UKPRN(1)))) shouldBe Map("foo" -> Set(UKPRN(1)))
@@ -36,14 +36,14 @@ class ProviderIndexSpec extends FlatSpec with Matchers {
   it should "match the start of a provider name" in {
     val result = ProviderIndex.lookup("WOOD")
     result.size shouldBe 1
-    result.head.rank - 1.4444 should be < 0.1
+    result.headOption.value.rank - 1.4444 should be < 0.1
   }
 
   it should "match two provider names" in {
     val results = ProviderIndex.matchPhrase("ACCESS MUSIC")
     results.size shouldBe 1
 
-    results.find(_.item.name == "ACCESS TO MUSIC LIMITED").map(_.rank).get shouldBe 4.0
+    results.find(_.item.name == "ACCESS TO MUSIC LIMITED").map(_.rank).value shouldBe 4.0
   }
 
 }

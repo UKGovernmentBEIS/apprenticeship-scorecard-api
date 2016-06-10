@@ -2,7 +2,7 @@ package uk.gov.bis.apprenticeshipScorecard.tools
 
 import cats.data.Validated.{Invalid, Valid}
 import cats.data.{NonEmptyList, Validated, ValidatedNel}
-import cats.{Applicative, SemigroupK, _}
+import cats.{Applicative, Semigroup, SemigroupK}
 
 import scala.util.Try
 
@@ -20,10 +20,7 @@ object FieldExtractors {
     fields.get(fieldName) match {
       case None => Invalid(NonEmptyList(s"no field found with name $fieldName"))
       case Some(s) if s.trim() == "" => Invalid(NonEmptyList(s"mandatory field $fieldName is blank"))
-      case Some(s) => implicitly[Read[T]].read(s).leftMap { es =>
-        val updatedErrs = es.unwrap.map(e => s"field name: $fieldName - $e")
-        NonEmptyList.fromList(updatedErrs).get
-      }
+      case Some(s) => implicitly[Read[T]].read(s).leftMap(_.map(e => s"field name: $fieldName - $e"))
     }
   }
 
@@ -96,11 +93,6 @@ object FieldExtractors {
         }
 
       def pure[A](x: A): Validated[E, A] = Validated.valid(x)
-
-      def map[A, B](fa: Validated[E, A])(f: A => B): Validated[E, B] = fa.map(f)
-
-      def product[A, B](fa: Validated[E, A], fb: Validated[E, B]): Validated[E, (A, B)] =
-        ap(fa.map(a => (b: B) => (a, b)))(fb)
     }
 
   implicit def nelSemigroup[T]: Semigroup[NonEmptyList[T]] =
