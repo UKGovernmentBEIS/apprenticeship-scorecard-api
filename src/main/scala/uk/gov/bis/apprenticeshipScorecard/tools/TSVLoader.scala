@@ -30,7 +30,6 @@ object TSVLoader {
 
   lazy val dataStore: DataStore = loadFromSource(Source.fromFile(fileName))
 
-
   def main(args: Array[String]): Unit = {
     val data = dataStore
 
@@ -59,7 +58,10 @@ object TSVLoader {
 
     val (providers, apprenticeships) = results.collect { case Valid(p) => p }.unzip
 
-    val providerMap = providers.groupBy(_.ukprn).map { case (k, vs) => (k, vs.head) }
+    val providerMap = providers.groupBy(_.ukprn).flatMap {
+      case (k, v :: vs) => Some((k, v))
+      case _ => None
+    }
 
     val subjects = apprenticeships.map(a => a.subject_tier_2_code -> Subject(a.subject_tier_2_code, a.subject_tier_2_title)).toMap
 

@@ -9,7 +9,6 @@ import scala.util.Try
 
 object FieldExtractors {
 
-
   trait Read[T] {
     def read(s: String): ValidatedNel[String, T]
   }
@@ -28,10 +27,7 @@ object FieldExtractors {
     fields.get(fieldName) match {
       case None => Invalid(NonEmptyList(s"no field found with name $fieldName"))
       case Some(s) if s.trim() == "" => Valid(None)
-      case Some(s) => implicitly[Read[T]].read(s).leftMap { es =>
-        val updatedErrs = es.unwrap.map(e => s"field name: $fieldName - $e")
-        NonEmptyList.fromList(updatedErrs).get
-      }.map(Some(_))
+      case Some(s) => implicitly[Read[T]].read(s).leftMap(_.map(e => s"field name: $fieldName - $e")).map(Some(_))
     }
   }
 
