@@ -2,18 +2,16 @@ package uk.gov.bis.apprenticeshipScorecard.tools
 
 import cats.data.Validated.{Invalid, Valid}
 import cats.data.{NonEmptyList, Validated, ValidatedNel}
+import cats.std.list._
 import cats.{Applicative, Semigroup, SemigroupK}
 
 import scala.util.Try
-
 
 object FieldExtractors {
 
   trait Read[T] {
     def read(s: String): ValidatedNel[String, T]
   }
-
-  import cats.std.list._
 
   def mandatory[T: Read](fieldName: String)(implicit fields: Map[String, String]): ValidatedNel[String, T] = {
     fields.get(fieldName) match {
@@ -75,7 +73,7 @@ object FieldExtractors {
     }
   }
 
-  import cats.std.list._
+
 
   // cats boilerplate to get Applicative syntax out of ValidatedNel
   implicit def validatedApplicative[E: Semigroup]: Applicative[Validated[E, ?]] =

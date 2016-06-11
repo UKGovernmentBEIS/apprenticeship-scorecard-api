@@ -1,6 +1,6 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
-import uk.gov.bis.apprenticeshipScorecard.models.{Provider, UKPRN}
+import uk.gov.bis.apprenticeshipScorecard.models.{Provider, SubjectCode, UKPRN}
 
 trait Index[T] {
   /**
@@ -57,22 +57,31 @@ class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
     }
   }
 
-  def extractMaps = {
-    val maps = dataStore.providers.values.map { provider =>
-      val subjects = dataStore.apprenticeships.find(_.provider_id == provider.ukprn).map { a =>
-        (a.subject_tier_2_code, a.subject_tier_2_title)
-      }.toList.distinct
+  def normalise(s: String): String = s.trim.toLowerCase
 
-      val keywords = provider.name.split("\\s").map(_.trim.toLowerCase) ++ subjects.flatMap(_._2.split("\\s").map(_.trim.toLowerCase))
-      val codes = subjects.map(_._1)
+  def splitWords(s: String): List[String] = s.split("\\s").toList
 
-      (Map(keywords.map(k => k -> provider.ukprn): _*), Map(codes.map(code => code.code.toString -> provider.ukprn): _*))
-    }.toSeq
-
-    (mergeMaps(maps.map(_._1)), mergeMaps(maps.map(_._2)))
+  def extractMaps = extractWordIndices match {
+    case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
   }
 
-  def mergeMaps(maps: Seq[Map[String, UKPRN]]): Map[String, Set[UKPRN]] = {
+  def extractWordIndices: (Iterable[Map[String, UKPRN]], Iterable[Map[String, UKPRN]]) =
+    dataStore.providers.values.map { provider =>
+      val (subjectCodes, subjectTitles) = extractSubjects(provider)
+
+      val keywords = (splitWords(provider.name) ++ subjectTitles.flatMap(splitWords)).map(normalise)
+
+      (Map(keywords.map(k => k -> provider.ukprn): _*), Map(subjectCodes.map(sc => sc.code.toString -> provider.ukprn): _*))
+    }.unzip
+
+
+  def extractSubjects(provider: Provider): (List[SubjectCode], List[String]) = {
+    dataStore.apprenticeships.find(_.provider_id == provider.ukprn).map { a =>
+      (a.subject_tier_2_code, a.subject_tier_2_title)
+    }.toList.distinct.unzip
+  }
+
+  def mergeMaps(maps: Iterable[Map[String, UKPRN]]): Map[String, Set[UKPRN]] = {
     maps.foldLeft(Map[String, Set[UKPRN]]()) { case (alreadyMerged, stringToUkprn) =>
       alreadyMerged ++ stringToUkprn.map { case (k, v) => k -> alreadyMerged.get(k).map(_ + v).getOrElse(Set(v)) }
     }
