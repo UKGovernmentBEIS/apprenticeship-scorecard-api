@@ -33,15 +33,17 @@ API to access data on UK apprenticeships and providers
             "website": "http://www.aldertraining.co.uk"
         }
         
-### List and filter providers [GET /providers{?query}{?fields}{?max_results}{?page_size}{?page_number}]
+### List and filter providers [GET /providers{?query}{?fields}{?sort_by}{?reverse}{?max_results}{?page_size}{?page_number}]
 
 List all (by default) providers in the data set. The results will be paged. The page size and page number can be set by the relevant optional parameters and the total number of results that are selected can be limited by the optional `max_results` parameter.
 
 You can use a query to select results that match specific conditions. The query language is simple, but quite powerful. You can reference fields from the json result using dotted paths (e.g. `description` or `learner_stats.satisfaction`), compare strings (`=`, `!=`, `starts with`, `ends with` and `contains`) and compare numbers `=`, `!=`, `>`, `<`, `>=` and `<=`). Here are some examples:
 
 + Parameters
-    + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of providers
-    + fields: ["stats.success_rate", "national_stats.success_rate"] (string, optional) - an array of paths referencing fields that should be included in the json output.
+    + query: "learner_stats.total > 200" (string, optional) - a query expression that will be used to filter the list of providers
+    + fields: ["stats.success_rate", "national_stats.success_rate"] (array of string, optional) - an array of paths referencing fields that should be included in the json output.
+    + sort_by: "stats.success_rate" (string, optional) - a path identifying the field the results should be sorted by.
+    + reverse: true (boolean, optional) - if `true` then the list of results will be reversed.
     + max_results: 500 (number, optional) - limit the number of apprenticeships that are selected. If note specified then all matching results will be selected.
     + page_size (number, optional) - limit the number of apprenticeships that are returned in a page
         + Default: 50
@@ -98,7 +100,7 @@ You can use a query to select results that match specific conditions. The query 
             }
         ]
 
-### Search the set of providers [GET /providers/search{?phrase}{?query}{?fields}{?max_results}{?page_size}{?page_number}]
+### Search the set of providers [GET /providers/search{?phrase}{?query}{?fields}{?sort_by}{?reverse}{?max_results}{?page_size}{?page_number}]
 
 Search the set of providers using one or more words. The results will include providers that match *all* the words in the phrase.
 
@@ -115,6 +117,8 @@ The search also supports the querying and field-extraction features of the "[GET
     + phrase: "acc music" (string, optional) - a string of one ore more words, space separated, that will be used to match against providers
     + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of providers
     + fields: ["stats.success_rate", "national_stats.success_rate"] (string, optional) - an array of paths referencing fields that should be included in the json output.
+    + sort_by: "stats.success_rate" (string, optional) - a path identifying the field the results should be sorted by.
+    + reverse: true (boolean, optional) - if `true` then the list of results will be reversed.
     + max_results: 500 (number, optional) - limit the number of apprenticeships that are selected. If note specified then all matching results will be selected.
     + page_size (number, optional) - limit the number of apprenticeships that are returned in a page
         + Default: 50
@@ -218,7 +222,7 @@ You can use a query to select results that match specific conditions. The query 
 
 Be aware that if you use a path that doesn't match in a particular result object then that part of the query will come out as `false`. This is a convenient way to select only results that have a certain field defined.
 
-### List and filter apprenticeships [GET /apprenticeships{?query}{?max_results}{?page_size}{?page_number}]
+### List and filter apprenticeships [GET /apprenticeships{?query}{?fields}{?sort_by}{?reverse}{?max_results}{?page_size}{?page_number}]
 
 + Parameters
     + query: learner_stats.total > 200 (string, optional) - a query expression that will be used to filter the list of apprenticeships
@@ -296,6 +300,7 @@ Duplicates are removed from the result set. So if, for example, you specify `"fi
                 "earnings",
                 "national_earnings"
             ],
+            "sort_by": "earnings.median",d
             "max_results": 500,
             "page_number": 2,
             "page_size": 10,
