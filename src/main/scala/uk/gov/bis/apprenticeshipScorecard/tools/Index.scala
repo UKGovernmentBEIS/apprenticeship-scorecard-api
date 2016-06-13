@@ -65,6 +65,13 @@ class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
     case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
   }
 
+  /**
+    * For each provider build one map that indexes it against keywords and one that indexes
+    * it against the subject codes it offers.
+    *
+    * @return a pair of maps with the keyword index as the first element and the subject code index
+    *         as the second element.
+    */
   def extractWordIndices: (Iterable[Map[String, UKPRN]], Iterable[Map[String, UKPRN]]) =
     dataStore.providers.values.map { provider =>
       val (subjectCodes, subjectTitles) = extractSubjects(provider)
