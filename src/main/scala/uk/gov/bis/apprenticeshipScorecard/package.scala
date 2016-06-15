@@ -1,14 +1,11 @@
 package uk.gov.bis
 
-import com.wellfactored.playbindings.PlayBindings
+import com.wellfactored.playbinders.{GenericReads, GenericWrites}
 import play.api.libs.json._
 import uk.gov.bis.apprenticeshipScorecard.models._
 import uk.gov.bis.apprenticeshipScorecard.tools.Subject
 
-package object apprenticeshipScorecard {
-  implicit val ukprnFormats = PlayBindings[Long, UKPRN]().formats
-  implicit val subjectCodeFormats = PlayBindings[BigDecimal, SubjectCode]().formats
-
+package object apprenticeshipScorecard extends GenericReads with GenericWrites {
   implicit val subjectFormats = Json.format[Subject]
 
   implicit val addressFormats = Json.format[Address]

@@ -1,8 +1,6 @@
 package uk.gov.bis.apprenticeshipScorecard
 
-import com.wellfactored.playbindings.PlayBindings
 import play.api.mvc.PathBindable
-import uk.gov.bis.apprenticeshipScorecard.models.{SubjectCode, UKPRN}
 
 import scala.util.Try
 
@@ -19,7 +17,4 @@ object bindings {
 
     override def unbind(key: String, value: BigDecimal): String = value.toString()
   }
-
-  implicit val ukprnBinding = PlayBindings[Long, UKPRN]().pathBindable
-  implicit val subjectCodeBinding = PlayBindings[BigDecimal, SubjectCode]().pathBindable
 }
