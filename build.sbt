@@ -14,7 +14,7 @@ git.useGitDescribe := true
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9004")
 
 routesImport ++= Seq("uk.gov.bis.apprenticeshipScorecard.models._","uk.gov.bis.apprenticeshipScorecard.bindings._")
-routesImport += "com.wellfactored.playbinders.GenericUrlBinders._"
+routesImport += "com.wellfactored.playbinders.ValueClassUrlBinders._"
 
 libraryDependencies ++= Seq(
   ws,
@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.7",
   "org.typelevel" %% "cats" % "0.6.0",
   "com.wellfactored" %% "restless" % "0.4.0",
-  "com.wellfactored" %% "play-bindings" % "0.3.0",
+  "com.wellfactored" %% "play-bindings" % "0.4.0",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0-RC1" % Test
 )
 
