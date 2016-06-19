@@ -1,7 +1,5 @@
 package uk.gov.bis.apprenticeshipScorecard
 
-import com.wellfactored.playbindings.SimpleWrapper
-
 package object models {
 
   case class UKPRN(id: Long) extends AnyVal
