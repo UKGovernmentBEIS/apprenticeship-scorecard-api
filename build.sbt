@@ -3,17 +3,17 @@ name := "apprenticeship-scorecard-api"
 
 scalaVersion := "2.11.8"
 
-enablePlugins(PlayScala)
-disablePlugins(PlayLayoutPlugin)
-
-enablePlugins(GitVersioning)
-enablePlugins(GitBranchPrompt)
+lazy val `apprenticeship-scorecard-api` = (project in file("."))
+  .enablePlugins(PlayScala)
+  .disablePlugins(PlayLayoutPlugin)
+  .enablePlugins(GitVersioning)
+  .enablePlugins(GitBranchPrompt)
 
 git.useGitDescribe := true
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "9004")
 
-routesImport ++= Seq("uk.gov.bis.apprenticeshipScorecard.models._","uk.gov.bis.apprenticeshipScorecard.bindings._")
+routesImport ++= Seq("uk.gov.bis.apprenticeshipScorecard.models._", "uk.gov.bis.apprenticeshipScorecard.bindings._")
 routesImport += "com.wellfactored.playbindings.ValueClassUrlBinders._"
 
 libraryDependencies ++= Seq(
