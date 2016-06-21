@@ -1,8 +1,14 @@
 package uk.gov.bis.apprenticeshipScorecard
 
+import eu.timepit.refined.api.Refined
+import eu.timepit.refined.boolean.Not
+import eu.timepit.refined.numeric._
+
 package object models {
 
   case class UKPRN(id: Long) extends AnyVal
+
+  type NonNegativeInt = Int Refined Not[Negative]
 
   case class SubjectCode(code: BigDecimal) extends AnyVal
 
@@ -12,7 +18,7 @@ package object models {
                            age_under_19: Option[Int],
                            age_19_to_24: Option[Int],
                            age_25_plus: Option[Int],
-                           total: Option[Int])
+                           total: Option[NonNegativeInt])
 
   case class Earnings(median: Option[BigDecimal], proportion_above_21k: Option[BigDecimal])
 

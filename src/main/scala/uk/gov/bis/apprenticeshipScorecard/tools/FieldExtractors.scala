@@ -3,7 +3,10 @@ package uk.gov.bis.apprenticeshipScorecard.tools
 import cats.data.Validated.{Invalid, Valid}
 import cats.data.{NonEmptyList, Validated, ValidatedNel}
 import cats.std.list._
+import cats.syntax.validated._
 import cats.{Applicative, Semigroup, SemigroupK}
+import eu.timepit.refined._
+import eu.timepit.refined.api.{Refined, Validate}
 
 import scala.util.Try
 
@@ -33,6 +36,17 @@ object FieldExtractors {
     def default(t: T): ValidatedNel[String, T] = v match {
       case Valid(_) => v
       case Invalid(_) => Valid(t)
+    }
+  }
+
+  implicit def refinedConverter[T: Read, P](implicit v: Validate[T, P]): Read[T Refined P] = new Read[T Refined P] {
+    override def read(s: String): ValidatedNel[String, Refined[T, P]] = {
+      implicitly[Read[T]].read(s).andThen { value =>
+        refineV[P](value) match {
+          case Left(err) => err.invalidNel
+          case Right(r) => r.validNel
+        }
+      }
     }
   }
 
@@ -72,7 +86,6 @@ object FieldExtractors {
         .getOrElse(Invalid(NonEmptyList(s"could not convert '$s' to a Long")))
     }
   }
-
 
 
   // cats boilerplate to get Applicative syntax out of ValidatedNel

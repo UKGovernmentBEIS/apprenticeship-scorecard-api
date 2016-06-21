@@ -1,9 +1,11 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
-import uk.gov.bis.apprenticeshipScorecard.models._
-import FieldExtractors._
 import cats.data.ValidatedNel
 import cats.syntax.cartesian._
+import eu.timepit.refined.boolean._
+import eu.timepit.refined.numeric._
+import uk.gov.bis.apprenticeshipScorecard.models._
+import uk.gov.bis.apprenticeshipScorecard.tools.FieldExtractors._
 
 trait Extractor[T] {
   def extract(implicit fields: Map[String, String]): ValidatedNel[String, T]
@@ -40,7 +42,7 @@ object LearnerExtractor extends Extractor[LearnerStats] {
     val u19 = optional[Int](ageU19FieldName).default(None)
     val u24 = optional[Int](age19to24FieldName).default(None)
     val plus = optional[Int](age25plusFieldName).default(None)
-    val total = optional[Int](learnersTotalFieldName).default(None)
+    val total = optional[NonNegativeInt](learnersTotalFieldName).default(None)
 
     (s |@| ns |@| u19 |@| u24 |@| plus |@| total).map(LearnerStats.apply)
   }
@@ -53,10 +55,9 @@ case class EarningsExtractor(national: Boolean = false) extends Extractor[Earnin
   val above21KFieldName = "proportion_earned_above_21k" + suffix
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Earnings] = {
-    val m = optional[BigDecimal](medianFieldName)
-    val above = optional[BigDecimal](above21KFieldName)
-
-    (m |@| above).map(Earnings.apply)
+    (optional[BigDecimal](medianFieldName) |@|
+      optional[BigDecimal](above21KFieldName)
+      ).map(Earnings.apply)
   }
 }
 

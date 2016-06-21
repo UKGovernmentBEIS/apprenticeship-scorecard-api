@@ -29,15 +29,15 @@
 	<array>
 		<dict>
 			<key>inUse</key>
-			<true/>
+			<false/>
 			<key>parameter</key>
 			<string>query</string>
 			<key>value</key>
-			<string>earnings.median &gt; 0</string>
+			<string>subject_tier_2_code = 15</string>
 		</dict>
 		<dict>
 			<key>inUse</key>
-			<true/>
+			<false/>
 			<key>parameter</key>
 			<string>fields</string>
 			<key>value</key>
@@ -61,7 +61,7 @@
 		</dict>
 		<dict>
 			<key>inUse</key>
-			<true/>
+			<false/>
 			<key>parameter</key>
 			<string>page_number</string>
 			<key>value</key>
