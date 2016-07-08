@@ -11,6 +11,8 @@ trait Index[T] {
     */
   def lookup(word: String): Seq[Ranked[T]]
 
+  def all: Seq[Ranked[T]]
+
   /**
     * Find entries that (at least partially) match *all* the words in the
     * phrase
@@ -29,7 +31,9 @@ trait Index[T] {
   }
 }
 
-case class Ranked[T](item: T, rank: Double)
+case class Ranked[T](item: T, rank: Double) {
+  def addRank(r: Double) = Ranked(item, rank + r)
+}
 
 object ProviderIndex extends ProviderIndex(TSVLoader.dataStore)
 
@@ -38,6 +42,8 @@ class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
     rankedPrn <- index.lookup(s)
     provider <- dataStore.providers.get(rankedPrn.item)
   } yield Ranked(provider, rankedPrn.rank)
+
+  override def all: Seq[Ranked[Provider]] = dataStore.providers.values.map(Ranked(_, 1)).toSeq
 
   lazy val index: Index[UKPRN] = {
     val (keywordMap, codeMap) = extractMaps
@@ -54,6 +60,8 @@ class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
           (wordMatches ++ codeMatches).toSeq
         } else Seq()
       }
+
+      override def all: Seq[Ranked[UKPRN]] = dataStore.providers.keys.map(Ranked(_, 1)).toSeq
     }
   }
 

@@ -1,9 +1,10 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
-import uk.gov.bis.apprenticeshipScorecard.models._
-import FieldExtractors._
 import cats.data.ValidatedNel
 import cats.syntax.cartesian._
+import cats.syntax.validated._
+import uk.gov.bis.apprenticeshipScorecard.models._
+import uk.gov.bis.apprenticeshipScorecard.tools.FieldExtractors._
 
 trait Extractor[T] {
   def extract(implicit fields: Map[String, String]): ValidatedNel[String, T]
@@ -53,10 +54,9 @@ case class EarningsExtractor(national: Boolean = false) extends Extractor[Earnin
   val above21KFieldName = "proportion_earned_above_21k" + suffix
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Earnings] = {
-    val m = optional[BigDecimal](medianFieldName)
-    val above = optional[BigDecimal](above21KFieldName)
-
-    (m |@| above).map(Earnings.apply)
+    (optional[BigDecimal](medianFieldName) |@|
+      optional[BigDecimal](above21KFieldName)
+      ).map(Earnings.apply)
   }
 }
 
@@ -109,6 +109,8 @@ object ProviderExtractor extends Extractor[Provider] {
   val laFieldName = "provider_la"
   val websiteFieldName = "website"
 
+
+
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Provider] = {
     val ukprn = UKPRNExtractor.extract
     val name = mandatory[String](nameFieldName)
@@ -118,8 +120,9 @@ object ProviderExtractor extends Extractor[Provider] {
     val la = mandatory[String](laFieldName)
     val address = AddressExtractor.extract
     val web = optional[String](websiteFieldName)
+    val as : ValidatedNel[String, Seq[Apprenticeship]] = Seq().validNel
 
-    (ukprn |@| name |@| typ |@| region |@| lea |@| la |@| address |@| web).map(Provider.apply)
+    (ukprn |@| name |@| typ |@| region |@| lea |@| la |@| address |@| web |@| as).map(Provider.apply)
   }
 }
 

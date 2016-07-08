@@ -17,7 +17,12 @@ case class DataStore(
                       errors: Seq[(Int, String)]
                     ) {
   lazy val apprenticeshipsJs = apprenticeships.sortBy(_.description).map(Json.toJson(_).as[JsObject])
-  lazy val providersJs = providers.values.toSeq.sortBy(_.ukprn.id).map(Json.toJson(_).as[JsObject])
+  lazy val providersJs = mergeWithApprenticeships(providers.values).toSeq.sortBy(_.ukprn.id).map(Json.toJson(_).as[JsObject])
+
+  def mergeWithApprenticeships(providers: Iterable[Provider]): Iterable[Provider] =
+    providers.map { provider =>
+      provider.copy(apprenticeships = this.apprenticeships.filter(_.provider_id == provider.ukprn))
+    }
 }
 
 object DataStore {
