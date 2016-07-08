@@ -7,6 +7,7 @@ import cats.syntax.validated._
 import cats.{Applicative, Semigroup, SemigroupK}
 import eu.timepit.refined._
 import eu.timepit.refined.api.{Refined, Validate}
+import eu.timepit.refined.boolean.{And, Or}
 
 import scala.util.Try
 
@@ -32,6 +33,10 @@ object FieldExtractors {
     }
   }
 
+  /**
+    * Provide a default value in the case where the field is invalid for any reason. In other words,
+    * converts an Invalid result to a Valid result using the supplied value.
+    */
   implicit class Default[T](v: ValidatedNel[String, T]) {
     def default(t: T): ValidatedNel[String, T] = v match {
       case Valid(_) => v
@@ -39,6 +44,9 @@ object FieldExtractors {
     }
   }
 
+  /**
+    * Converts a value of type T with a refinement predicate P. There needs to be a Validate[T, P] instance available.
+    */
   implicit def refinedConverter[T: Read, P](implicit v: Validate[T, P]): Read[T Refined P] = new Read[T Refined P] {
     override def read(s: String): ValidatedNel[String, Refined[T, P]] = {
       implicitly[Read[T]].read(s).andThen { value =>

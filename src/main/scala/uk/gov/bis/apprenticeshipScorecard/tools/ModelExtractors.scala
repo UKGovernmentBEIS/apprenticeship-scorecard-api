@@ -39,9 +39,9 @@ object LearnerExtractor extends Extractor[LearnerStats] {
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, LearnerStats] = {
     val s = optional[BigDecimal](lssFieldName).default(None)
     val ns = optional[BigDecimal](lssaFieldName).default(None)
-    val u19 = optional[Int](ageU19FieldName).default(None)
-    val u24 = optional[Int](age19to24FieldName).default(None)
-    val plus = optional[Int](age25plusFieldName).default(None)
+    val u19 = optional[NonNegativeInt](ageU19FieldName).default(None)
+    val u24 = optional[NonNegativeInt](age19to24FieldName).default(None)
+    val plus = optional[NonNegativeInt](age25plusFieldName).default(None)
     val total = optional[NonNegativeInt](learnersTotalFieldName).default(None)
 
     (s |@| ns |@| u19 |@| u24 |@| plus |@| total).map(LearnerStats.apply)
@@ -70,11 +70,10 @@ case class QualificationStatsExtractor(national: Boolean = false) extends Extrac
   val achievementRateFieldName = "qual_achievement_rate" + suffix
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, QualificationStats] = {
-    val sr = optional[BigDecimal](successRateFieldName).default(None)
-    val rr = optional[BigDecimal](retentionRateFieldName).default(None)
-    val ar = optional[BigDecimal](achievementRateFieldName).default(None)
-
-    (sr |@| rr |@| ar).map(QualificationStats.apply)
+    (optional[BigDecimal](successRateFieldName).default(None) |@|
+      optional[BigDecimal](retentionRateFieldName).default(None) |@|
+      optional[BigDecimal](achievementRateFieldName).default(None)
+      ).map(QualificationStats.apply)
   }
 }
 
