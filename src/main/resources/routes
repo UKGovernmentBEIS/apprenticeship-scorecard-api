@@ -1,7 +1,7 @@
 
 GET         /subject/:subjectCode                    uk.gov.bis.apprenticeshipScorecard.controllers.Subjects.subject(subjectCode:SubjectCode)
 
-GET         /providers/search                        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.search(phrase:String)
+GET         /providers/search                        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.search(phrase:Option[String], lat:Option[Double], lon:Option[Double], dist:Option[Double])
 GET         /providers/:ukprn                        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.find(ukprn:UKPRN)
 GET         /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.apprenticeships(ukprn:UKPRN)
 POST        /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipScorecard.controllers.Providers.apprenticeships(ukprn:UKPRN)

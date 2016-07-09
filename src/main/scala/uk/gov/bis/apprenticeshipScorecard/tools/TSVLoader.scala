@@ -53,18 +53,22 @@ object TSVLoader {
     ds
   }
 
+  def mergeWithApprenticeships(providers: Iterable[Provider], apprenticeships:Seq[Apprenticeship]): Iterable[Provider] =
+    providers.map { provider =>
+      provider.copy(apprenticeships = apprenticeships.filter(_.provider_id == provider.ukprn))
+    }
+
   def processData(lines: List[String], colNames: List[String]): DataStore = {
     val results = parseRecords(lines, colNames)
 
     val (providers, apprenticeships) = results.collect { case Valid(p) => p }.unzip
 
-    val providerMap = providers.groupBy(_.ukprn).flatMap {
+    val providerMap = mergeWithApprenticeships(providers, apprenticeships).groupBy(_.ukprn).flatMap {
       case (k, v :: vs) => Some((k, v))
       case _ => None
     }
 
     val subjects = apprenticeships.map(a => a.subject_tier_2_code -> Subject(a.subject_tier_2_code, a.subject_tier_2_title)).toMap
-
 
     val errs = results.collect { case Invalid(es) => es }.flatten
 
