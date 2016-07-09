@@ -91,7 +91,7 @@ class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
 
 
   def extractSubjects(provider: Provider): (List[SubjectCode], List[String]) = {
-    dataStore.apprenticeships.find(_.provider_id == provider.ukprn).map { a =>
+    provider.apprenticeships.map { a =>
       (a.subject_tier_2_code, a.subject_tier_2_title)
     }.toList.distinct.unzip
   }

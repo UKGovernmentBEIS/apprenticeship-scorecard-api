@@ -68,8 +68,14 @@ class Providers @Inject()(implicit ec: ExecutionContext) extends Controller {
 
   case class LocationSearchParams(point: Point, radius: Double)
 
-  def search(phrase: String) = JsCollect {
-    ProviderIndex.matchPhrase(phrase).sortBy(_.rank).map(Json.toJson(_).as[JsObject])
+  def search(phrase: Option[String], lato: Option[Double], lono: Option[Double], disto: Option[Double]) = JsCollect {
+    val lsp = for {
+      lat <- lato
+      lon <- lono
+      dist <- disto
+    } yield LocationSearchParams(Point(lat, lon), dist)
+
+    ProviderIndex.matchPhrase(phrase).searchLocation(lsp).sortBy(_.rank).map(Json.toJson(_).as[JsObject])
   }
 
   def apprenticeships(ukprn: UKPRN) = JsCollect {
