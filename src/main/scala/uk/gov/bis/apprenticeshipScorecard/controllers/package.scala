@@ -26,7 +26,12 @@ package object controllers {
   implicit def formats[T: Writes] = new Writes[Ranked[T]] {
     override def writes(o: Ranked[T]): JsValue = {
       val resultsJson = Json.toJson(o.item).as[JsObject]
-      resultsJson.+("search_rank" -> JsNumber(o.rank))
+      val extras = Seq(
+        Some("search_rank" -> JsNumber(o.rank)),
+        o.distance.map(d => "distance" -> JsNumber(d))
+      ).flatten
+
+      JsObject(extras).++(resultsJson)
     }
   }
 }

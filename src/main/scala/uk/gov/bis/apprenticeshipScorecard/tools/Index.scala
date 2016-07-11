@@ -31,8 +31,10 @@ trait Index[T] {
   }
 }
 
-case class Ranked[T](item: T, rank: Double) {
-  def addRank(r: Double) = Ranked(item, rank + r)
+case class Ranked[T](item: T, rank: Double, distance: Option[Double] = None) {
+  def addRank(r: Double): Ranked[T] = copy(rank = this.rank + r)
+
+  def withDistance(d: Double): Ranked[T] = copy(distance = Some(d))
 }
 
 object ProviderIndex extends ProviderIndex(TSVLoader.dataStore)
