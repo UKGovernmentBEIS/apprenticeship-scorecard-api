@@ -6,6 +6,7 @@ import com.wellfactored.restless.play.actions.ApiActions._
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, Controller}
 import uk.gov.bis.apprenticeshipScorecard.models._
+import uk.gov.bis.apprenticeshipScorecard.tools.DataStore.ProviderWithApprenticeships
 import uk.gov.bis.apprenticeshipScorecard.tools.{ProviderIndex, Ranked, TSVLoader}
 
 import scala.concurrent.ExecutionContext
@@ -25,7 +26,7 @@ class Providers @Inject()(implicit ec: ExecutionContext) extends Controller with
   }
 
   implicit class ProviderIndexSyntax(index: ProviderIndex) {
-    def matchPhrase(op: Option[String]): Seq[Ranked[Join[Provider, Seq[Apprenticeship]]]] = op match {
+    def matchPhrase(op: Option[String]): Seq[Ranked[ProviderWithApprenticeships]] = op match {
       case None => index.all
       case Some(phrase) => index.matchPhrase(phrase)
     }

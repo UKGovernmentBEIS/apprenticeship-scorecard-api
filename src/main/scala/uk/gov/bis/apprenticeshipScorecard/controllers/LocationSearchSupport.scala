@@ -1,10 +1,21 @@
 package uk.gov.bis.apprenticeshipScorecard.controllers
 
-import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Join, Provider}
-import uk.gov.bis.apprenticeshipScorecard.tools.DataStore.ProviderWithApprenticeships
+import uk.gov.bis.apprenticeshipScorecard.tools.DataStore.{ApprenticeshipWithProvider, ProviderWithApprenticeships}
 import uk.gov.bis.apprenticeshipScorecard.tools.Ranked
 
 trait LocationSearchSupport {
+  def location[T](r: Ranked[T], lato: Option[BigDecimal], lono: Option[BigDecimal], point: Point, radius: Double): Option[Ranked[T]] =
+    (lato, lono) match {
+      case (Some(lat), Some(lon)) =>
+        val distance = haversineDistance(point, Point(lat.doubleValue(), lon.doubleValue()))
+        if (distance <= radius) {
+          // Somewhat arbitrary formula to calculate extra rank based on distance from search point
+          val additionalRank = radius / (distance + 1) / radius * 3
+          Some(r.addRank(additionalRank).withDistance(distance))
+        } else None
+      case _ => None
+    }
+
   implicit class SearchSyntax(results: Seq[Ranked[ProviderWithApprenticeships]]) {
     def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[ProviderWithApprenticeships]] = ol match {
       case None => results
@@ -13,16 +24,20 @@ trait LocationSearchSupport {
 
     def searchLocation(params: LocationSearchParams): Seq[Ranked[ProviderWithApprenticeships]] = {
       results.flatMap { rp =>
-        (rp.item.primary.address.latitude, rp.item.primary.address.longitude) match {
-          case (Some(lat), Some(lon)) =>
-            val distance = haversineDistance(params.point, Point(lat.doubleValue(), lon.doubleValue()))
-            if (distance <= params.radius) {
-              // Somewhat arbitrary formula to calculate extra rank based on distance from search point
-              val additionalRank = params.radius / (distance + 1) / params.radius * 3
-              Some(rp.addRank(additionalRank).withDistance(distance))
-            } else None
-          case _ => None
-        }
+        location(rp, rp.item.primary.address.latitude, rp.item.primary.address.longitude, params.point, params.radius)
+      }
+    }
+  }
+
+  implicit class SearchSyntax2(results: Seq[Ranked[ApprenticeshipWithProvider]]) {
+    def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[ApprenticeshipWithProvider]] = ol match {
+      case None => results
+      case Some(params) => searchLocation(params)
+    }
+
+    def searchLocation(params: LocationSearchParams): Seq[Ranked[ApprenticeshipWithProvider]] = {
+      results.flatMap { rp =>
+        location(rp, rp.item.secondary.address.latitude, rp.item.secondary.address.longitude, params.point, params.radius)
       }
     }
   }
@@ -45,4 +60,5 @@ trait LocationSearchSupport {
   }
 
   case class LocationSearchParams(point: Point, radius: Double)
+
 }
