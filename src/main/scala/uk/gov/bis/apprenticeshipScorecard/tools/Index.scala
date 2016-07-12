@@ -1,6 +1,7 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
 import uk.gov.bis.apprenticeshipScorecard.models._
+import uk.gov.bis.apprenticeshipScorecard.tools.DataStore.ProviderWithApprenticeships
 
 trait Index[T] {
   /**
@@ -39,13 +40,13 @@ case class Ranked[T](item: T, rank: Double, distance: Option[Double] = None) {
 
 object ProviderIndex extends ProviderIndex(TSVLoader.dataStore)
 
-class ProviderIndex(dataStore: DataStore) extends Index[JoinMany[Provider, Apprenticeship]] {
-  override def lookup(s: String): Seq[Ranked[JoinMany[Provider, Apprenticeship]]] = for {
+class ProviderIndex(dataStore: DataStore) extends Index[ProviderWithApprenticeships] {
+  override def lookup(s: String): Seq[Ranked[ProviderWithApprenticeships]] = for {
     rankedPrn <- index.lookup(s)
     provider <- dataStore.providersWithApprenticeships.find(_.primary.ukprn == rankedPrn.item)
   } yield Ranked(provider, rankedPrn.rank)
 
-  override def all: Seq[Ranked[JoinMany[Provider, Apprenticeship]]] =
+  override def all: Seq[Ranked[ProviderWithApprenticeships]] =
     dataStore.providersWithApprenticeships.map(Ranked(_, 1)).toSeq
 
   lazy val index: Index[UKPRN] = {
@@ -93,7 +94,7 @@ class ProviderIndex(dataStore: DataStore) extends Index[JoinMany[Provider, Appre
     }.unzip
 
 
-  def extractSubjects(provider: JoinMany[Provider, Apprenticeship]): (List[SubjectCode], List[String]) = {
+  def extractSubjects(provider: ProviderWithApprenticeships): (List[SubjectCode], List[String]) = {
     provider.secondary.map { a =>
       (a.subject_tier_2_code, a.subject_tier_2_title)
     }.toList.distinct.unzip

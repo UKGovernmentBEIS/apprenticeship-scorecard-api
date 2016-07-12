@@ -16,20 +16,26 @@ case class DataStore(
                       subjects: Map[SubjectCode, Subject],
                       errors: Seq[(Int, String)]
                     ) {
-  lazy val apprenticeshipsJs = apprenticeshipsWithProvider.sortBy(_.primary.description).map(Json.toJson(_).as[JsObject])
+
+  import DataStore.{ProviderWithApprenticeships, ApprenticeshipWithProvider}
+
+  lazy val apprenticeshipsJs = apprenticeshipsWithProvider.toSeq.sortBy(_.primary.description).map(Json.toJson(_).as[JsObject])
   lazy val providersJs = providers.values.toSeq.sortBy(_.ukprn.id).map(Json.toJson(_).as[JsObject])
 
-  lazy val providersWithApprenticeships = providers.values.map { provider =>
-    JoinMany(provider, apprenticeships.filter(_.provider_id == provider.ukprn), "apprenticeships")
+  lazy val providersWithApprenticeships: Iterable[ProviderWithApprenticeships] = providers.values.map { provider =>
+    Join(provider, apprenticeships.filter(_.provider_id == provider.ukprn), "apprenticeships")
   }
 
-  lazy val apprenticeshipsWithProvider = apprenticeships.map { a =>
-    JoinOne(a, providers(a.provider_id), "provider")
+  lazy val apprenticeshipsWithProvider: Iterable[ApprenticeshipWithProvider] = apprenticeships.map { a =>
+    Join(a, providers(a.provider_id), "provider")
   }
 }
 
 object DataStore {
   val empty = DataStore(Map(), Seq(), Map(), Seq())
+
+  type ApprenticeshipWithProvider = Apprenticeship Join Provider
+  type ProviderWithApprenticeships = Provider Join Seq[Apprenticeship]
 }
 
 object TSVLoader {

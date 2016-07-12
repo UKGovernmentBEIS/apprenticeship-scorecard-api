@@ -1,16 +1,17 @@
 package uk.gov.bis.apprenticeshipScorecard.controllers
 
-import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, JoinMany, Provider}
+import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Join, Provider}
+import uk.gov.bis.apprenticeshipScorecard.tools.DataStore.ProviderWithApprenticeships
 import uk.gov.bis.apprenticeshipScorecard.tools.Ranked
 
 trait LocationSearchSupport {
-  implicit class SearchSyntax(results: Seq[Ranked[JoinMany[Provider, Apprenticeship]]]) {
-    def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[JoinMany[Provider, Apprenticeship]]] = ol match {
+  implicit class SearchSyntax(results: Seq[Ranked[ProviderWithApprenticeships]]) {
+    def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[ProviderWithApprenticeships]] = ol match {
       case None => results
       case Some(params) => searchLocation(params)
     }
 
-    def searchLocation(params: LocationSearchParams): Seq[Ranked[JoinMany[Provider, Apprenticeship]]] = {
+    def searchLocation(params: LocationSearchParams): Seq[Ranked[ProviderWithApprenticeships]] = {
       results.flatMap { rp =>
         (rp.item.primary.address.latitude, rp.item.primary.address.longitude) match {
           case (Some(lat), Some(lon)) =>
