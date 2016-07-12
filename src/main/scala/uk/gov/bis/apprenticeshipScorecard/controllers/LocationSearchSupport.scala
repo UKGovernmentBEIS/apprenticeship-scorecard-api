@@ -1,18 +1,18 @@
 package uk.gov.bis.apprenticeshipScorecard.controllers
 
-import uk.gov.bis.apprenticeshipScorecard.models.Provider
+import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, JoinMany, Provider}
 import uk.gov.bis.apprenticeshipScorecard.tools.Ranked
 
 trait LocationSearchSupport {
-  implicit class SearchSyntax(results: Seq[Ranked[Provider]]) {
-    def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[Provider]] = ol match {
+  implicit class SearchSyntax(results: Seq[Ranked[JoinMany[Provider, Apprenticeship]]]) {
+    def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[JoinMany[Provider, Apprenticeship]]] = ol match {
       case None => results
       case Some(params) => searchLocation(params)
     }
 
-    def searchLocation(params: LocationSearchParams): Seq[Ranked[Provider]] = {
+    def searchLocation(params: LocationSearchParams): Seq[Ranked[JoinMany[Provider, Apprenticeship]]] = {
       results.flatMap { rp =>
-        (rp.item.address.latitude, rp.item.address.longitude) match {
+        (rp.item.primary.address.latitude, rp.item.primary.address.longitude) match {
           case (Some(lat), Some(lon)) =>
             val distance = haversineDistance(params.point, Point(lat.doubleValue(), lon.doubleValue()))
             if (distance <= params.radius) {

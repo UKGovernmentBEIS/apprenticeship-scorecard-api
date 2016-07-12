@@ -120,9 +120,8 @@ object ProviderExtractor extends Extractor[Provider] {
     val la = mandatory[String](laFieldName)
     val address = AddressExtractor.extract
     val web = optional[String](websiteFieldName)
-    val as : ValidatedNel[String, Seq[Apprenticeship]] = Seq().validNel
 
-    (ukprn |@| name |@| typ |@| region |@| lea |@| la |@| address |@| web |@| as).map(Provider.apply)
+    (ukprn |@| name |@| typ |@| region |@| lea |@| la |@| address |@| web).map(Provider.apply)
   }
 }
 

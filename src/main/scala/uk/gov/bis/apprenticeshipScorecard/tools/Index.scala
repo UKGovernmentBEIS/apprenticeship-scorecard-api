@@ -1,6 +1,6 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
-import uk.gov.bis.apprenticeshipScorecard.models.{Provider, SubjectCode, UKPRN}
+import uk.gov.bis.apprenticeshipScorecard.models._
 
 trait Index[T] {
   /**
@@ -39,13 +39,14 @@ case class Ranked[T](item: T, rank: Double, distance: Option[Double] = None) {
 
 object ProviderIndex extends ProviderIndex(TSVLoader.dataStore)
 
-class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
-  override def lookup(s: String): Seq[Ranked[Provider]] = for {
+class ProviderIndex(dataStore: DataStore) extends Index[JoinMany[Provider, Apprenticeship]] {
+  override def lookup(s: String): Seq[Ranked[JoinMany[Provider, Apprenticeship]]] = for {
     rankedPrn <- index.lookup(s)
-    provider <- dataStore.providers.get(rankedPrn.item)
+    provider <- dataStore.providersWithApprenticeships.find(_.primary.ukprn == rankedPrn.item)
   } yield Ranked(provider, rankedPrn.rank)
 
-  override def all: Seq[Ranked[Provider]] = dataStore.providers.values.map(Ranked(_, 1)).toSeq
+  override def all: Seq[Ranked[JoinMany[Provider, Apprenticeship]]] =
+    dataStore.providersWithApprenticeships.map(Ranked(_, 1)).toSeq
 
   lazy val index: Index[UKPRN] = {
     val (keywordMap, codeMap) = extractMaps
@@ -83,17 +84,17 @@ class ProviderIndex(dataStore: DataStore) extends Index[Provider] {
     *         as the second element.
     */
   def extractWordIndices: (Iterable[Map[String, UKPRN]], Iterable[Map[String, UKPRN]]) =
-    dataStore.providers.values.map { provider =>
-      val (subjectCodes, subjectTitles) = extractSubjects(provider)
+    dataStore.providersWithApprenticeships.map { join =>
+      val (subjectCodes, subjectTitles) = extractSubjects(join)
+      val provider = join.primary
 
       val keywords = (splitWords(provider.name) ++ subjectTitles.flatMap(splitWords)).map(normalise)
-
       (Map(keywords.map(k => k -> provider.ukprn): _*), Map(subjectCodes.map(sc => sc.code.toString -> provider.ukprn): _*))
     }.unzip
 
 
-  def extractSubjects(provider: Provider): (List[SubjectCode], List[String]) = {
-    provider.apprenticeships.map { a =>
+  def extractSubjects(provider: JoinMany[Provider, Apprenticeship]): (List[SubjectCode], List[String]) = {
+    provider.secondary.map { a =>
       (a.subject_tier_2_code, a.subject_tier_2_title)
     }.toList.distinct.unzip
   }
