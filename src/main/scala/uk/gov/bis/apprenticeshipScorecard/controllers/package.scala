@@ -21,7 +21,7 @@ package object controllers {
 
   /**
     * Unwrap the object from the rank, convert it to json and then inject
-    * the `search_rank` as a top-level property.
+    * the `search_rank` and `distance` as a top-level properties.
     */
   implicit def formats[T: Writes] = new Writes[Ranked[T]] {
     override def writes(o: Ranked[T]): JsValue = {

@@ -9,14 +9,11 @@ import uk.gov.bis.apprenticeshipScorecard.tools.TSVLoader
 
 import scala.concurrent.ExecutionContext
 
-class Subjects @Inject()(implicit ec: ExecutionContext) extends Controller {
+class Subjects @Inject()(implicit ec: ExecutionContext) extends Controller with OptionResults {
 
   import TSVLoader.dataStore
 
   def subject(subjectCode: SubjectCode) = Action { implicit request =>
-    dataStore.subjects.get(subjectCode) match {
-      case None => NotFound
-      case Some(p) => Ok(Json.toJson(p))
-    }
+    dataStore.subjects.get(subjectCode).map(Json.toJson(_)).toResult
   }
 }

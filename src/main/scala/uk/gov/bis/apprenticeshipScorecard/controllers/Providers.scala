@@ -11,7 +11,7 @@ import uk.gov.bis.apprenticeshipScorecard.tools.{ProviderIndex, Ranked, TSVLoade
 
 import scala.concurrent.ExecutionContext
 
-class Providers @Inject()(implicit ec: ExecutionContext) extends Controller with LocationSearchSupport {
+class Providers @Inject()(implicit ec: ExecutionContext) extends Controller with LocationSearchSupport with OptionResults {
 
   implicit val providerFormat = Json.format[Provider]
   implicit val apprenticeshipFormat = Json.format[Apprenticeship]
@@ -19,10 +19,7 @@ class Providers @Inject()(implicit ec: ExecutionContext) extends Controller with
   import TSVLoader.dataStore
 
   def find(ukprn: UKPRN) = Action { implicit request =>
-    dataStore.providers.get(ukprn) match {
-      case None => NotFound
-      case Some(p) => Ok(Json.toJson(p))
-    }
+    dataStore.providers.get(ukprn).map(Json.toJson(_)).toResult
   }
 
   implicit class ProviderIndexSyntax(index: ProviderIndex) {
