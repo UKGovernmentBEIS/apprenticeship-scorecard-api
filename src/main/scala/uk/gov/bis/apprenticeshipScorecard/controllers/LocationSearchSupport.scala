@@ -16,30 +16,35 @@ trait LocationSearchSupport {
       case _ => None
     }
 
-  implicit class SearchSyntax(results: Seq[Ranked[ProviderWithApprenticeships]]) {
-    def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[ProviderWithApprenticeships]] = ol match {
+  trait SearchLocation[T] {
+    def results: Seq[Ranked[T]]
+
+    def lat(t: T): Option[BigDecimal]
+
+    def lon(t: T): Option[BigDecimal]
+
+    def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[T]] = ol match {
       case None => results
       case Some(params) => searchLocation(params)
     }
 
-    def searchLocation(params: LocationSearchParams): Seq[Ranked[ProviderWithApprenticeships]] = {
+    def searchLocation(params: LocationSearchParams): Seq[Ranked[T]] = {
       results.flatMap { rp =>
-        location(rp, rp.item.primary.address.latitude, rp.item.primary.address.longitude, params.point, params.radius)
+        location(rp, lat(rp.item), lon(rp.item), params.point, params.radius)
       }
     }
   }
 
-  implicit class SearchSyntax2(results: Seq[Ranked[ApprenticeshipWithProvider]]) {
-    def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[ApprenticeshipWithProvider]] = ol match {
-      case None => results
-      case Some(params) => searchLocation(params)
-    }
+  implicit class SearchSyntax(override val results: Seq[Ranked[ProviderWithApprenticeships]]) extends SearchLocation[ProviderWithApprenticeships] {
+    override def lat(t: ProviderWithApprenticeships) = t.primary.address.latitude
 
-    def searchLocation(params: LocationSearchParams): Seq[Ranked[ApprenticeshipWithProvider]] = {
-      results.flatMap { rp =>
-        location(rp, rp.item.secondary.address.latitude, rp.item.secondary.address.longitude, params.point, params.radius)
-      }
-    }
+    override def lon(t: ProviderWithApprenticeships) = t.primary.address.longitude
+  }
+
+  implicit class SearchSyntax2(override val results: Seq[Ranked[ApprenticeshipWithProvider]]) extends SearchLocation[ApprenticeshipWithProvider] {
+    override def lat(t: ApprenticeshipWithProvider) = t.secondary.address.latitude
+
+    override def lon(t: ApprenticeshipWithProvider) = t.secondary.address.longitude
   }
 
   case class Point(lat: Double, lon: Double)
