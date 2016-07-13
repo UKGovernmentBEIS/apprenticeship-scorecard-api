@@ -43,7 +43,7 @@ class ProviderIndexSpec extends FlatSpec with Matchers with OptionValues {
     val results = ProviderIndex.matchPhrase("ACCESS MUSIC")
     results.size shouldBe 1
 
-    results.find(_.item.name == "ACCESS TO MUSIC LIMITED").map(_.rank).value shouldBe 4.0
+    results.find(_.item.primary.name == "ACCESS TO MUSIC LIMITED").map(_.rank).value shouldBe 4.0
   }
 
 }

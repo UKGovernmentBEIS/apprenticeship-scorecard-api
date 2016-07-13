@@ -1,6 +1,6 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
-import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider, SubjectCode, UKPRN}
+import uk.gov.bis.apprenticeshipScorecard.models._
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import cats.std.list._
@@ -16,12 +16,26 @@ case class DataStore(
                       subjects: Map[SubjectCode, Subject],
                       errors: Seq[(Int, String)]
                     ) {
-  lazy val apprenticeshipsJs = apprenticeships.sortBy(_.description).map(Json.toJson(_).as[JsObject])
+
+  import DataStore.{ProviderWithApprenticeships, ApprenticeshipWithProvider}
+
+  lazy val apprenticeshipsJs = apprenticeshipsWithProvider.toSeq.sortBy(_.primary.description).map(Json.toJson(_).as[JsObject])
   lazy val providersJs = providers.values.toSeq.sortBy(_.ukprn.id).map(Json.toJson(_).as[JsObject])
+
+  lazy val providersWithApprenticeships: Iterable[ProviderWithApprenticeships] = providers.values.map { provider =>
+    Join(provider, apprenticeships.filter(_.provider_id == provider.ukprn), "apprenticeships")
+  }
+
+  lazy val apprenticeshipsWithProvider: Iterable[ApprenticeshipWithProvider] = apprenticeships.map { a =>
+    Join(a, providers(a.provider_id), "provider")
+  }
 }
 
 object DataStore {
   val empty = DataStore(Map(), Seq(), Map(), Seq())
+
+  type ApprenticeshipWithProvider = Apprenticeship Join Provider
+  type ProviderWithApprenticeships = Provider Join Seq[Apprenticeship]
 }
 
 object TSVLoader {
@@ -53,17 +67,12 @@ object TSVLoader {
     ds
   }
 
-  def mergeWithApprenticeships(providers: Iterable[Provider], apprenticeships:Seq[Apprenticeship]): Iterable[Provider] =
-    providers.map { provider =>
-      provider.copy(apprenticeships = apprenticeships.filter(_.provider_id == provider.ukprn))
-    }
-
   def processData(lines: List[String], colNames: List[String]): DataStore = {
     val results = parseRecords(lines, colNames)
 
     val (providers, apprenticeships) = results.collect { case Valid(p) => p }.unzip
 
-    val providerMap = mergeWithApprenticeships(providers, apprenticeships).groupBy(_.ukprn).flatMap {
+    val providerMap = providers.groupBy(_.ukprn).flatMap {
       case (k, v :: vs) => Some((k, v))
       case _ => None
     }

@@ -36,8 +36,7 @@ package object models {
                        lea: String,
                        la: String,
                        address: Address,
-                       website: Option[String],
-                       apprenticeships: Seq[Apprenticeship])
+                       website: Option[String])
 
   case class Apprenticeship(
                              subject_tier_2_code: SubjectCode,

@@ -9,5 +9,6 @@ POST        /providers/:ukprn/apprenticeships        uk.gov.bis.apprenticeshipSc
 GET         /providers                               uk.gov.bis.apprenticeshipScorecard.controllers.Providers.providers
 POST        /providers                               uk.gov.bis.apprenticeshipScorecard.controllers.Providers.providers
 
-GET         /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.apprenticehships
-POST        /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.apprenticehships
+GET         /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.apprenticeships
+GET         /apprenticeships/search                  uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.search(phrase:Option[String], lat:Option[Double], lon:Option[Double], dist:Option[Double])
+POST        /apprenticeships                         uk.gov.bis.apprenticeshipScorecard.controllers.Apprenticeships.apprenticeships
