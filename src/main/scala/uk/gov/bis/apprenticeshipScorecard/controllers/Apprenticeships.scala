@@ -25,6 +25,12 @@ class Apprenticeships @Inject()(implicit ec: ExecutionContext) extends Controlle
     }
   }
 
+  implicit object LocatableA extends Locatable[ApprenticeshipWithProvider] {
+    override def lat(t: ApprenticeshipWithProvider): Option[BigDecimal] = t.secondary.address.latitude
+
+    override def lon(t: ApprenticeshipWithProvider): Option[BigDecimal] = t.secondary.address.longitude
+  }
+
   def search(phrase: Option[String], lato: Option[Double], lono: Option[Double], disto: Option[Double]) = JsCollect {
     val lsp = for (lat <- lato; lon <- lono; dist <- disto)
       yield LocationSearchParams(Point(lat, lon), dist)

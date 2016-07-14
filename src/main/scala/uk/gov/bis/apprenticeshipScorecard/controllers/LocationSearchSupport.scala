@@ -1,11 +1,16 @@
 package uk.gov.bis.apprenticeshipScorecard.controllers
 
-import uk.gov.bis.apprenticeshipScorecard.tools.DataStore.{ApprenticeshipWithProvider, ProviderWithApprenticeships}
 import uk.gov.bis.apprenticeshipScorecard.tools.Ranked
 
+trait Locatable[T] {
+  def lat(t: T): Option[BigDecimal]
+
+  def lon(t: T): Option[BigDecimal]
+}
+
 trait LocationSearchSupport {
-  def location[T](r: Ranked[T], lato: Option[BigDecimal], lono: Option[BigDecimal], point: Point, radius: Double): Option[Ranked[T]] =
-    (lato, lono) match {
+  def withDistance[T](r: Ranked[T], point: Point, radius: Double)(implicit loc: Locatable[T]): Option[Ranked[T]] =
+    (loc.lat(r.item), loc.lon(r.item)) match {
       case (Some(lat), Some(lon)) =>
         val distance = haversineDistance(point, Point(lat.doubleValue(), lon.doubleValue()))
         if (distance <= radius) {
@@ -19,33 +24,19 @@ trait LocationSearchSupport {
   trait SearchLocation[T] {
     def results: Seq[Ranked[T]]
 
-    def lat(t: T): Option[BigDecimal]
-
-    def lon(t: T): Option[BigDecimal]
-
-    def searchLocation(ol: Option[LocationSearchParams]): Seq[Ranked[T]] = ol match {
+    def searchLocation(ol: Option[LocationSearchParams])(implicit locator: Locatable[T]): Seq[Ranked[T]] = ol match {
       case None => results
       case Some(params) => searchLocation(params)
     }
 
-    def searchLocation(params: LocationSearchParams): Seq[Ranked[T]] = {
+    def searchLocation(params: LocationSearchParams)(implicit locator: Locatable[T]): Seq[Ranked[T]] = {
       results.flatMap { rp =>
-        location(rp, lat(rp.item), lon(rp.item), params.point, params.radius)
+        withDistance(rp, params.point, params.radius)
       }
     }
   }
 
-  implicit class SearchSyntax(override val results: Seq[Ranked[ProviderWithApprenticeships]]) extends SearchLocation[ProviderWithApprenticeships] {
-    override def lat(t: ProviderWithApprenticeships) = t.primary.address.latitude
-
-    override def lon(t: ProviderWithApprenticeships) = t.primary.address.longitude
-  }
-
-  implicit class SearchSyntax2(override val results: Seq[Ranked[ApprenticeshipWithProvider]]) extends SearchLocation[ApprenticeshipWithProvider] {
-    override def lat(t: ApprenticeshipWithProvider) = t.secondary.address.latitude
-
-    override def lon(t: ApprenticeshipWithProvider) = t.secondary.address.longitude
-  }
+  implicit class SearchSyntax[T: Locatable](override val results: Seq[Ranked[T]]) extends SearchLocation[T]
 
   case class Point(lat: Double, lon: Double)
 
