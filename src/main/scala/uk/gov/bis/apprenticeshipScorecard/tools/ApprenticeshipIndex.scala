@@ -56,13 +56,12 @@ class ApprenticeshipIndex(dataStore: DataStore) extends Index[ApprenticeshipWith
       val (subjectCode, subjectTitle) = extractSubject(app.primary)
       val provider = app.secondary
 
-      val keywords = splitWords(provider.name) ++ splitWords(subjectTitle).map(normalise)
+      val keywords = (splitWords(provider.name) ++ splitWords(subjectTitle)).map(normalise)
       (Map(keywords.map(k => k -> app): _*), Map(subjectCode.code.toString -> app))
     }.unzip
 
 
   def extractSubject(app: Apprenticeship): (SubjectCode, String) = (app.subject_tier_2_code, app.subject_tier_2_title)
-
 
   def mergeMaps(maps: Iterable[Map[String, ApprenticeshipWithProvider]]): Map[String, Set[ApprenticeshipWithProvider]] = {
     maps.foldLeft(Map[String, Set[ApprenticeshipWithProvider]]()) { case (alreadyMerged, stringToUkprn) =>
