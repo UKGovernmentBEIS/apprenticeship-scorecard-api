@@ -16,23 +16,13 @@ class ProviderIndex(dataStore: DataStore) extends Index[ProviderWithApprenticesh
     val (keywordMap, codeMap) = extractMaps
 
     new Index[UKPRN] {
-      // Not the most efficient implementation, but good enough for the 800-odd providers in our data set
-      override def lookup(word: String): Seq[Ranked[UKPRN]] = {
-        val searchWord = word.trim().toLowerCase
-        if (searchWord != "") {
-          val wordMatches = keywordMap.keys.filter(_.startsWith(searchWord)).flatMap { key =>
-            keywordMap(key).map(prn => Ranked(prn, 1.0 + searchWord.length.toDouble / key.length))
-          }
-          val codeMatches = codeMap.keys.filter(_ == searchWord).flatMap(codeMap(_).map(prn => Ranked(prn, 2.0)))
-          (wordMatches ++ codeMatches).toSeq
-        } else Seq()
-      }
+      override def lookup(word: String): Seq[Ranked[UKPRN]] = lookupWord(word, keywordMap, codeMap)
 
       override def all: Seq[Ranked[UKPRN]] = dataStore.providers.keys.map(Ranked(_, 1)).toSeq
     }
   }
 
-  def extractMaps = extractWordIndices match {
+  def extractMaps: (Map[String, Set[UKPRN]], Map[String, Set[UKPRN]]) = extractWordIndices match {
     case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
   }
 

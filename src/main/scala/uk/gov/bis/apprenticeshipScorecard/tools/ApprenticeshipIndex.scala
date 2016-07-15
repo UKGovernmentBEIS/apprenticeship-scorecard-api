@@ -20,21 +20,12 @@ class ApprenticeshipIndex(dataStore: DataStore) extends Index[ApprenticeshipWith
     val (keywordMap, codeMap) = extractMaps
 
     new Index[ApprenticeshipWithProvider] {
-      // Not the most efficient implementation, but good enough for the 800-odd providers in our data set
-      override def lookup(word: String): Seq[Ranked[ApprenticeshipWithProvider]] = {
-        val searchWord = word.trim().toLowerCase
-        if (searchWord != "") {
-          val wordMatches = keywordMap.keys.filter(_.startsWith(searchWord)).flatMap { key =>
-            keywordMap(key).map(prn => Ranked(prn, 1.0 + searchWord.length.toDouble / key.length))
-          }
-          val codeMatches = codeMap.keys.filter(_ == searchWord).flatMap(codeMap(_).map(prn => Ranked(prn, 2.0)))
-          (wordMatches ++ codeMatches).toSeq
-        } else Seq()
-      }
+      override def lookup(word: String): Seq[Ranked[ApprenticeshipWithProvider]] = lookupWord(word, keywordMap, codeMap)
 
       override def all: Seq[Ranked[ApprenticeshipWithProvider]] = dataStore.apprenticeshipsWithProvider.map(Ranked(_, 1)).toSeq
     }
   }
+
 
   def extractMaps = extractWordIndices match {
     case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
@@ -48,13 +39,13 @@ class ApprenticeshipIndex(dataStore: DataStore) extends Index[ApprenticeshipWith
     *         as the second element.
     */
   def extractWordIndices: (Iterable[Map[String, ApprenticeshipWithProvider]], Iterable[Map[String, ApprenticeshipWithProvider]]) =
-    dataStore.apprenticeshipsWithProvider.map { app =>
-      val (subjectCode, subjectTitle) = extractSubject(app.primary)
-      val provider = app.secondary
+  dataStore.apprenticeshipsWithProvider.map { app =>
+    val (subjectCode, subjectTitle) = extractSubject(app.primary)
+    val provider = app.secondary
 
-      val keywords = (splitWords(provider.name) ++ splitWords(subjectTitle)).map(normalise)
-      (Map(keywords.map(k => k -> app): _*), Map(subjectCode.code.toString -> app))
-    }.unzip
+    val keywords = (splitWords(provider.name) ++ splitWords(subjectTitle)).map(normalise)
+    (Map(keywords.map(k => k -> app): _*), Map(subjectCode.code.toString -> app))
+  }.unzip
 
 
   def extractSubject(app: Apprenticeship): (SubjectCode, String) = (app.subject_tier_2_code, app.subject_tier_2_title)

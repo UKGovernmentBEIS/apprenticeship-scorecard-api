@@ -37,6 +37,18 @@ trait Index[T] {
       alreadyMerged ++ next.map { case (k, v) => k -> alreadyMerged.get(k).map(_ + v).getOrElse(Set(v)) }
     }
   }
+
+  def lookupWord(word: String, prefixMap: Map[String, Set[T]], fullwordMap: Map[String, Set[T]]): Seq[Ranked[T]] = {
+    val searchWord = word.trim().toLowerCase
+    if (searchWord != "") {
+      val wordMatches = prefixMap.keys.filter(_.startsWith(searchWord)).flatMap { key =>
+        prefixMap(key).map(prn => Ranked(prn, 1.0 + searchWord.length.toDouble / key.length))
+      }
+      val codeMatches = fullwordMap.keys.filter(_ == searchWord).flatMap(fullwordMap(_).map(prn => Ranked(prn, 2.0)))
+      (wordMatches ++ codeMatches).toSeq
+    } else Seq()
+  }
+
 }
 
 case class Ranked[T](item: T, rank: Double, distance: Option[Double] = None) {
