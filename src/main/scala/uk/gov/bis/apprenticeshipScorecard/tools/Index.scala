@@ -26,7 +26,7 @@ trait Index[T] {
   lazy val matchers: Seq[MatchFn] = Seq(prefixMatch(prefixMatchWords, _), exactMatch(exactMatchWords, _))
 
   def exactMatch(fullwordMap: WordIndex, searchWord: String): Iterable[Ranked[T]] =
-    fullwordMap.keys.filter(_ == searchWord).flatMap(fullwordMap(_).map(prn => Ranked(prn, 2.0)))
+    fullwordMap.get(searchWord).toSeq.flatMap(s => s.map(t => Ranked(t, 2.0)))
 
   def prefixMatch(prefixMap: WordIndex, searchWord: String): Iterable[Ranked[T]] =
     prefixMap.keys.filter(_.startsWith(searchWord)).flatMap { key =>
