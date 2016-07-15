@@ -7,9 +7,31 @@ trait Index[T] {
     * @param word the word to match
     * @return a set of entries with a matching rank
     */
-  def lookup(word: String): Seq[Ranked[T]] = lookupWord(word, prefixMatchWords, exactMatchWords)
+  def lookup(word: String): Seq[Ranked[T]] = word.trim().toLowerCase match {
+    case "" => Seq()
+    case searchWord => matchers.flatMap(f => f(searchWord))
+  }
 
   def all: Seq[Ranked[T]]
+
+  def extractWordIndices: (Iterable[Map[String, T]], Iterable[Map[String, T]])
+
+  type WordIndex = Map[String, Set[T]]
+  type MatchFn = String => Iterable[Ranked[T]]
+
+  lazy val (prefixMatchWords, exactMatchWords) = extractWordIndices match {
+    case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
+  }
+
+  lazy val matchers: Seq[MatchFn] = Seq(prefixMatch(prefixMatchWords, _), exactMatch(exactMatchWords, _))
+
+  def exactMatch(fullwordMap: WordIndex, searchWord: String): Iterable[Ranked[T]] =
+    fullwordMap.keys.filter(_ == searchWord).flatMap(fullwordMap(_).map(prn => Ranked(prn, 2.0)))
+
+  def prefixMatch(prefixMap: WordIndex, searchWord: String): Iterable[Ranked[T]] =
+    prefixMap.keys.filter(_.startsWith(searchWord)).flatMap { key =>
+      prefixMap(key).map(prn => Ranked(prn, 1.0 + searchWord.length.toDouble / key.length))
+    }
 
   /**
     * Find entries that (at least partially) match *all* the words in the
@@ -35,26 +57,6 @@ trait Index[T] {
       alreadyMerged ++ next.map { case (k, v) => k -> alreadyMerged.get(k).map(_ + v).getOrElse(Set(v)) }
     }
   }
-
-  def lookupWord(word: String, prefixMap: Map[String, Set[T]], fullwordMap: Map[String, Set[T]]): Seq[Ranked[T]] = {
-    val searchWord = word.trim().toLowerCase
-    if (searchWord != "") {
-      val wordMatches = prefixMap.keys.filter(_.startsWith(searchWord)).flatMap { key =>
-        prefixMap(key).map(prn => Ranked(prn, 1.0 + searchWord.length.toDouble / key.length))
-      }
-      val codeMatches = fullwordMap.keys.filter(_ == searchWord).flatMap(fullwordMap(_).map(prn => Ranked(prn, 2.0)))
-      (wordMatches ++ codeMatches).toSeq
-    } else Seq()
-  }
-
-  def extractWordIndices: (Iterable[Map[String, T]], Iterable[Map[String, T]])
-
-  def extractMaps: (Map[String, Set[T]], Map[String, Set[T]]) = extractWordIndices match {
-    case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
-  }
-
-  lazy val (prefixMatchWords, exactMatchWords) = extractMaps
-
 }
 
 case class Ranked[T](item: T, rank: Double, distance: Option[Double] = None) {
