@@ -36,10 +36,6 @@ class ApprenticeshipIndex(dataStore: DataStore) extends Index[ApprenticeshipWith
     }
   }
 
-  def normalise(s: String): String = s.trim.toLowerCase
-
-  def splitWords(s: String): List[String] = s.split("\\s").toList
-
   def extractMaps = extractWordIndices match {
     case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
   }
@@ -63,11 +59,7 @@ class ApprenticeshipIndex(dataStore: DataStore) extends Index[ApprenticeshipWith
 
   def extractSubject(app: Apprenticeship): (SubjectCode, String) = (app.subject_tier_2_code, app.subject_tier_2_title)
 
-  def mergeMaps(maps: Iterable[Map[String, ApprenticeshipWithProvider]]): Map[String, Set[ApprenticeshipWithProvider]] = {
-    maps.foldLeft(Map[String, Set[ApprenticeshipWithProvider]]()) { case (alreadyMerged, stringToUkprn) =>
-      alreadyMerged ++ stringToUkprn.map { case (k, v) => k -> alreadyMerged.get(k).map(_ + v).getOrElse(Set(v)) }
-    }
-  }
+
 }
 
 object ApprenticeshipIndex extends ApprenticeshipIndex(TSVLoader.dataStore)

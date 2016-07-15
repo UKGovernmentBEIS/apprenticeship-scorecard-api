@@ -32,10 +32,6 @@ class ProviderIndex(dataStore: DataStore) extends Index[ProviderWithApprenticesh
     }
   }
 
-  def normalise(s: String): String = s.trim.toLowerCase
-
-  def splitWords(s: String): List[String] = s.split("\\s").toList
-
   def extractMaps = extractWordIndices match {
     case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
   }
@@ -61,12 +57,6 @@ class ProviderIndex(dataStore: DataStore) extends Index[ProviderWithApprenticesh
     provider.secondary.map { a =>
       (a.subject_tier_2_code, a.subject_tier_2_title)
     }.toList.distinct.unzip
-  }
-
-  def mergeMaps(maps: Iterable[Map[String, UKPRN]]): Map[String, Set[UKPRN]] = {
-    maps.foldLeft(Map[String, Set[UKPRN]]()) { case (alreadyMerged, stringToUkprn) =>
-      alreadyMerged ++ stringToUkprn.map { case (k, v) => k -> alreadyMerged.get(k).map(_ + v).getOrElse(Set(v)) }
-    }
   }
 }
 

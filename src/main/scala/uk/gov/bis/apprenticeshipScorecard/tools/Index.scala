@@ -27,6 +27,16 @@ trait Index[T] {
       (k, vs) <- matches.groupBy(_.item).toSeq
     } yield Ranked(k, vs.map(_.rank).sum)
   }
+
+  def normalise(s: String): String = s.trim.toLowerCase
+
+  def splitWords(s: String): List[String] = s.split("\\s").toList
+
+  def mergeMaps[A](maps: Iterable[Map[String, A]]): Map[String, Set[A]] = {
+    maps.foldLeft(Map[String, Set[A]]()) { case (alreadyMerged, next) =>
+      alreadyMerged ++ next.map { case (k, v) => k -> alreadyMerged.get(k).map(_ + v).getOrElse(Set(v)) }
+    }
+  }
 }
 
 case class Ranked[T](item: T, rank: Double, distance: Option[Double] = None) {
