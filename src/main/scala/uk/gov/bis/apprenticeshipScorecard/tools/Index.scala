@@ -7,7 +7,7 @@ trait Index[T] {
     * @param word the word to match
     * @return a set of entries with a matching rank
     */
-  def lookup(word: String): Seq[Ranked[T]]
+  def lookup(word: String): Seq[Ranked[T]] = lookupWord(word, prefixMatchWords, exactMatchWords)
 
   def all: Seq[Ranked[T]]
 
@@ -46,6 +46,14 @@ trait Index[T] {
       (wordMatches ++ codeMatches).toSeq
     } else Seq()
   }
+
+  def extractWordIndices: (Iterable[Map[String, T]], Iterable[Map[String, T]])
+
+  def extractMaps: (Map[String, Set[T]], Map[String, Set[T]]) = extractWordIndices match {
+    case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
+  }
+
+  lazy val (prefixMatchWords, exactMatchWords) = extractMaps
 
 }
 
