@@ -21,11 +21,9 @@ trait Index[T] {
     // find items that are in all the result sets
     val matches = resultSets.foldLeft(resultSets.flatten) { case (remainingResults, resultSet) =>
       remainingResults.filter(r => resultSet.exists(_.item == r.item))
-    }
+    }.groupBy(_.item).toSeq
 
-    for {
-      (k, vs) <- matches.groupBy(_.item).toSeq
-    } yield Ranked(k, vs.map(_.rank).sum)
+    for ((k, vs) <- matches) yield Ranked(k, vs.map(_.rank).sum)
   }
 
   def normalise(s: String): String = s.trim.toLowerCase

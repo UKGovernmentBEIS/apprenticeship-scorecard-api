@@ -26,7 +26,6 @@ class ApprenticeshipIndex(dataStore: DataStore) extends Index[ApprenticeshipWith
     }
   }
 
-
   def extractMaps = extractWordIndices match {
     case (keywordMaps, subjectCodeMaps) => (mergeMaps(keywordMaps), mergeMaps(subjectCodeMaps))
   }
