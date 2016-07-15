@@ -30,6 +30,6 @@ class Providers @Inject()(implicit ec: ExecutionContext) extends Controller with
 
   def providers = JsCollect(dataStore.providersJs)
 
-  override implicit def locator: Locatable[ProviderWithApprenticeships] = implicitly[Locatable[ProviderWithApprenticeships]]
-  override implicit def writes: Writes[ProviderWithApprenticeships] = implicitly[Writes[ProviderWithApprenticeships]]
+  override implicit def locator: Locatable[ProviderWithApprenticeships] = locatableP
+  override implicit def writes: Writes[ProviderWithApprenticeships] = Join.writes[Provider, Seq[Apprenticeship]]
 }

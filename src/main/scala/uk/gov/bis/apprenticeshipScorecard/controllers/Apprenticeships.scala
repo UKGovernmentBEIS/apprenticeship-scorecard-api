@@ -3,8 +3,9 @@ package uk.gov.bis.apprenticeshipScorecard.controllers
 import javax.inject.Inject
 
 import com.wellfactored.restless.play.actions.ApiActions._
-import play.api.libs.json.Writes
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc._
+import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Join, Provider}
 import uk.gov.bis.apprenticeshipScorecard.tools.DataStore.ApprenticeshipWithProvider
 import uk.gov.bis.apprenticeshipScorecard.tools.{ApprenticeshipIndex, TSVLoader}
 
@@ -15,6 +16,7 @@ class Apprenticeships @Inject()(implicit ec: ExecutionContext) extends Controlle
 
   override def index = ApprenticeshipIndex
 
-  override implicit def locator: Locatable[ApprenticeshipWithProvider] = implicitly[Locatable[ApprenticeshipWithProvider]]
-  override implicit def writes: Writes[ApprenticeshipWithProvider] = implicitly[Writes[ApprenticeshipWithProvider]]
+  override implicit def locator: Locatable[ApprenticeshipWithProvider] = locatableA
+
+  override implicit def writes: Writes[ApprenticeshipWithProvider] = Join.writes[Apprenticeship, Provider]
 }
