@@ -23,6 +23,7 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats" % "0.6.1",
   "com.wellfactored" %% "restless" % "0.5.1",
   "com.wellfactored" %% "play-bindings" % "1.0.0",
+
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % Test
 )
 
