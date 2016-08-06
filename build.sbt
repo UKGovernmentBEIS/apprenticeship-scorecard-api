@@ -20,10 +20,10 @@ libraryDependencies ++= Seq(
   ws,
   "joda-time" % "joda-time" % "2.7",
   "org.joda" % "joda-convert" % "1.7",
-  "org.typelevel" %% "cats" % "0.6.0",
+  "org.typelevel" %% "cats" % "0.6.1",
   "com.wellfactored" %% "restless" % "0.5.1",
-  "com.wellfactored" %% "play-bindings" % "0.4.0",
-  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0-RC1" % Test
+  "com.wellfactored" %% "play-bindings" % "1.0.0",
+  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % Test
 )
 
 resolvers += Resolver.sonatypeRepo("releases")
