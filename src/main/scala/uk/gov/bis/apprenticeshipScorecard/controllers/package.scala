@@ -2,7 +2,6 @@ package uk.gov.bis.apprenticeshipScorecard
 
 import play.api.libs.json._
 import play.api.mvc.Result
-import uk.gov.bis.apprenticeshipScorecard.controllers.Locatable
 import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Provider}
 import uk.gov.bis.apprenticeshipScorecard.tools.DataStore._
 import uk.gov.bis.apprenticeshipScorecard.tools.Haversine.Point
