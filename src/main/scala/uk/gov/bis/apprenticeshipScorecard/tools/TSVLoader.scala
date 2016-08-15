@@ -11,10 +11,11 @@ import scala.io.Source
 case class Subject(subject_tier_2_code: SubjectCode, subject_tier_2_title: String)
 
 case class DataStore(
+                      columnNames: Seq[String],
                       providers: Map[UKPRN, Provider],
                       apprenticeships: Seq[Apprenticeship],
                       subjects: Map[SubjectCode, Subject],
-                      errors: Seq[(Int, String)]
+                      errors: Seq[LineError]
                     ) {
 
   import DataStore.{ProviderWithApprenticeships, ApprenticeshipWithProvider}
@@ -31,8 +32,10 @@ case class DataStore(
   }
 }
 
+case class LineError(lineNumber: Int, error: String, fields: Map[String, String])
+
 object DataStore {
-  val empty = DataStore(Map(), Seq(), Map(), Seq())
+  val empty = DataStore(Seq(), Map(), Seq(), Map(), Seq())
 
   type ApprenticeshipWithProvider = Apprenticeship Join Provider
   type ProviderWithApprenticeships = Provider Join Seq[Apprenticeship]
@@ -40,7 +43,7 @@ object DataStore {
 
 object TSVLoader {
 
-  val fileName = "data/Scorecard_Analysis_Data_For_Site_v4_fictional.tsv"
+  val fileName = "data/Scorecard_Data_v5.tsv"
 
   lazy val dataStore: DataStore = loadFromSource(Source.fromFile(fileName))
 
@@ -51,8 +54,9 @@ object TSVLoader {
 
     println(data.apprenticeships.count(_.learner_stats.satisfaction.isDefined) + " apprenticeships with learner stats")
 
-    data.errors.foreach { case (line, e) => println(s"line $line: $e") }
+    data.errors.foreach { case LineError(line, e, fields) => println(s"line $line: $e"); println(fields) }
     if (data.errors.nonEmpty) println(s"total errors: ${data.errors.length}")
+    println(data.columnNames)
   }
 
   def loadFromSource(source: Source): DataStore = {
@@ -81,10 +85,11 @@ object TSVLoader {
 
     val errs = results.collect { case Invalid(es) => es }.flatten
 
-    DataStore(providerMap, apprenticeships, subjects, errs)
+    DataStore(colNames, providerMap, apprenticeships, subjects, errs)
   }
 
-  def parseRecords(lines: List[String], colNames: List[String]): List[Validated[List[(Int, String)], (Provider, Apprenticeship)]] = {
+
+  def parseRecords(lines: List[String], colNames: List[String]): List[Validated[List[LineError], (Provider, Apprenticeship)]] = {
     lines.tail.zipWithIndex.map {
       case (record, idx) =>
         val fieldValues = record.split("\t").toList
@@ -92,7 +97,7 @@ object TSVLoader {
 
         RecordExtractor.extract(fields) match {
           case v@Valid(_) => v
-          case Invalid(es) => Invalid(es.unwrap.map(idx -> _))
+          case Invalid(es) => Invalid(es.unwrap.map(LineError(idx, _, fields)))
         }
     }
   }

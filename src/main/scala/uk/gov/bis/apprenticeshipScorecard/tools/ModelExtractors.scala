@@ -2,7 +2,6 @@ package uk.gov.bis.apprenticeshipScorecard.tools
 
 import cats.data.ValidatedNel
 import cats.syntax.cartesian._
-import cats.syntax.validated._
 import uk.gov.bis.apprenticeshipScorecard.models._
 import uk.gov.bis.apprenticeshipScorecard.tools.FieldExtractors._
 
@@ -20,7 +19,7 @@ object UKPRNExtractor extends Extractor[UKPRN] {
 
 object SubjectCodeExtractor extends Extractor[SubjectCode] {
 
-  val codeFieldName = "ssa_tier2_code"
+  val codeFieldName = "ssa_tier_2_code"
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, SubjectCode] =
     mandatory[BigDecimal](codeFieldName).map(SubjectCode(_))
@@ -51,7 +50,7 @@ case class EarningsExtractor(national: Boolean = false) extends Extractor[Earnin
 
   val suffix = if (national) "_avg" else ""
   val medianFieldName = "median_earnings" + suffix
-  val above21KFieldName = "proportion_earned_above_21k" + suffix
+  val above21KFieldName = "proportion_earning_above_21k" + suffix
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Earnings] = {
     (optional[BigDecimal](medianFieldName) |@|
@@ -127,8 +126,8 @@ object ProviderExtractor extends Extractor[Provider] {
 
 object ApprenticeshipExtractor extends Extractor[Apprenticeship] {
 
-  val titleFieldName = "ssa_tier2_description"
-  val descriptionFieldName = "ssa_tier2_description"
+  val titleFieldName = "ssa_tier_2_description"
+  val descriptionFieldName = "ssa_tier_2_description"
   val costFieldName = "average_cost"
 
   override def extract(implicit fields: Map[String, String]): ValidatedNel[String, Apprenticeship] = {
