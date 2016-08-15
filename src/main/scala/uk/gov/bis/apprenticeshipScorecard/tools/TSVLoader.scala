@@ -56,7 +56,6 @@ object TSVLoader {
 
     data.errors.foreach { case LineError(line, e, fields) => println(s"line $line: $e"); println(fields) }
     if (data.errors.nonEmpty) println(s"total errors: ${data.errors.length}")
-    println(data.columnNames)
   }
 
   def loadFromSource(source: Source): DataStore = {

@@ -12,11 +12,15 @@ package object models {
                            age_under_19: Option[Int],
                            age_19_to_24: Option[Int],
                            age_25_plus: Option[Int],
-                           total: Option[Int])
+                           total: Option[Int],
+                           intermediate: Option[Int],
+                           advanced: Option[Int],
+                           higher: Option[Int]
+                         )
 
   case class Earnings(median: Option[BigDecimal], proportion_above_21k: Option[BigDecimal])
 
-  case class QualificationStats(success_rate: Option[BigDecimal], retention_rate: Option[BigDecimal], achievement_rate: Option[BigDecimal])
+  case class QualificationStats(pass_rate: Option[BigDecimal], retention_rate: Option[BigDecimal], achievement_rate: Option[BigDecimal])
 
   case class Address(
                       address1: Option[String],
@@ -30,6 +34,8 @@ package object models {
 
   case class Provider(
                        ukprn: UKPRN,
+                       provisionType: String,
+                       level: String,
                        name: String,
                        provider_type: String,
                        region: String,
