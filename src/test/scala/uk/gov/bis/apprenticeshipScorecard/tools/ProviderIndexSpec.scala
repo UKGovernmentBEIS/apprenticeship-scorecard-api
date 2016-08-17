@@ -26,7 +26,7 @@ class ProviderIndexSpec extends FlatSpec with Matchers with OptionValues {
   }
 
   "ProviderIndex" should "match a subject code" in {
-    ProviderIndex.lookup("15.1").size shouldBe 173
+    ProviderIndex.lookup("15.1").size shouldBe 18
   }
 
   it should "match a provider name" in {
@@ -40,10 +40,10 @@ class ProviderIndexSpec extends FlatSpec with Matchers with OptionValues {
   }
 
   it should "match two provider names" in {
-    val results = ProviderIndex.matchPhrase("ACCESS MUSIC")
-    results.size shouldBe 1
+    val results = ProviderIndex.matchPhrase("ACCESS TRAINING")
+    results.size shouldBe 2
 
-    results.find(_.item.primary.name == "ACCESS TO MUSIC LIMITED").map(_.rank).value shouldBe 4.0
+    results.find(_.item.primary.name == "ACCESS TRAINING (EAST MIDLANDS) LTD").map(_.rank).value shouldBe 4.0
   }
 
 }
