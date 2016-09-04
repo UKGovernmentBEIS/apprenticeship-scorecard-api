@@ -34,7 +34,7 @@ package object models {
 
   case class Provider(
                        ukprn: UKPRN,
-                       provisionType: String,
+                       provision_type: String,
                        level: String,
                        name: String,
                        provider_type: String,
