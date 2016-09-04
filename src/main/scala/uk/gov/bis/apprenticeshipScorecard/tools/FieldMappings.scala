@@ -1,6 +1,6 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
-trait Binding
+sealed trait Binding
 
 case class SimpleBinding(fieldName: String) extends Binding
 
