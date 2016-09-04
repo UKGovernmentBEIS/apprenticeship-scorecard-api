@@ -1,11 +1,16 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
-import uk.gov.bis.apprenticeshipScorecard.models._
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import cats.std.list._
+import cats.std.option._
+import cats.syntax.cartesian._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{JsObject, Json}
+import uk.gov.bis.apprenticeshipScorecard.models._
+import uk.gov.bis.apprenticeshipScorecard.tools.Haversine.Point
 
+import scala.concurrent.Future
 import scala.io.Source
 
 case class Subject(subject_tier_2_code: SubjectCode, subject_tier_2_title: String)
@@ -18,7 +23,7 @@ case class DataStore(
                       errors: Seq[LineError]
                     ) {
 
-  import DataStore.{ProviderWithApprenticeships, ApprenticeshipWithProvider}
+  import DataStore.{ApprenticeshipWithProvider, ProviderWithApprenticeships}
 
   lazy val apprenticeshipsJs = apprenticeshipsWithProvider.toSeq.sortBy(_.primary.description).map(Json.toJson(_).as[JsObject])
   lazy val providersJs = providers.values.toSeq.sortBy(_.ukprn.id).map(Json.toJson(_).as[JsObject])
@@ -87,6 +92,30 @@ object TSVLoader {
     DataStore(colNames, providerMap, apprenticeships, subjects, errs)
   }
 
+  def populateCoords(providers: Seq[Provider]): Future[Seq[Provider]] = {
+    providers.grouped(10).foldLeft(Future(Seq[Provider]())) { (acc, ps) =>
+      for {
+        p <- Future.sequence(ps.map(populateCoords))
+        a <- acc
+      } yield p ++ a
+    }
+  }
+
+  def populateCoords(p: Provider): Future[Provider] = {
+    ((p.address.latitude |@| p.address.longitude).tupled match {
+      case None => p.address.post_code.map(postcodeCoords).getOrElse(Future.successful(None))
+      case Some((lat, lon)) => Future(Some(Point(lat.doubleValue, lon.doubleValue)))
+    }).map {
+      case Some(point) =>
+        p.copy(
+          address = p.address.copy(
+            latitude = Some(point.lat),
+            longitude = Some(point.lon)))
+      case None => p
+    }
+  }
+
+  def postcodeCoords(postcode: String): Future[Option[Point]] = ???
 
   def parseRecords(lines: List[String], colNames: List[String]): List[Validated[List[LineError], (Provider, Apprenticeship)]] = {
     lines.tail.zipWithIndex.map {
