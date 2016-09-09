@@ -1,14 +1,11 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
-import cats.data.Validated
-import cats.data.Validated.{Invalid, Valid}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.bis.apprenticeshipScorecard.models._
 
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
-import scala.io.Source
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import scala.concurrent.{Await, Future}
 
 case class Subject(subject_tier_2_code: SubjectCode, subject_tier_2_title: String)
 
