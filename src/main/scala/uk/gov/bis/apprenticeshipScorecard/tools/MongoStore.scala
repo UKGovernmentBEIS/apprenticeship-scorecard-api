@@ -1,5 +1,6 @@
 package uk.gov.bis.apprenticeshipScorecard.tools
 
+import play.api.Logger
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.api.{DefaultDB, MongoConnection, MongoDriver}
 import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDouble, BSONReader, Macros}
@@ -10,6 +11,8 @@ import scala.concurrent.{ExecutionContext, Future}
 object MongoStore {
 
   val mongoUri = Option(System.getenv("MONGODB_URL")).getOrElse("mongodb://localhost:27017/apprenticeship-scorecard")
+
+  Logger.info(mongoUri)
 
   import ExecutionContext.Implicits.global
 
