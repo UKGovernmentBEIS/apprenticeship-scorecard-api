@@ -12,8 +12,6 @@ object MongoStore {
 
   val mongoUri = Option(System.getenv("MONGODB_URL")).getOrElse("mongodb://localhost:27017/apprenticeship-scorecard")
 
-  Logger.info(mongoUri)
-
   import ExecutionContext.Implicits.global
 
   // Connect to the database: Must be done only once per application
