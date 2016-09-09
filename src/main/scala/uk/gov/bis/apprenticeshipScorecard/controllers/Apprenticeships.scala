@@ -7,12 +7,12 @@ import play.api.libs.json.Writes
 import play.api.mvc._
 import uk.gov.bis.apprenticeshipScorecard.models.{Apprenticeship, Join, Provider}
 import uk.gov.bis.apprenticeshipScorecard.tools.DataStore.ApprenticeshipWithProvider
-import uk.gov.bis.apprenticeshipScorecard.tools.{ApprenticeshipIndex, TSVLoader}
+import uk.gov.bis.apprenticeshipScorecard.tools.{ApprenticeshipIndex, DataLoader}
 
 import scala.concurrent.ExecutionContext
 
 class Apprenticeships @Inject()(implicit ec: ExecutionContext) extends Controller with SearchSupport[ApprenticeshipWithProvider] {
-  def apprenticeships = JsCollect(TSVLoader.dataStore.apprenticeshipsJs)
+  def apprenticeships = JsCollect(DataLoader.dataStore.apprenticeshipsJs)
 
   override def index = ApprenticeshipIndex
 

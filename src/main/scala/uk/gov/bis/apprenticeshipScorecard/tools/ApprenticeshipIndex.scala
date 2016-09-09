@@ -16,7 +16,7 @@ class ApprenticeshipIndex(dataStore: DataStore) extends Index[ApprenticeshipWith
     }.unzip
 
 
-  def extractSubject(app: Apprenticeship): (SubjectCode, String) = (app.subject_tier_2_code, app.subject_tier_2_title)
+  def extractSubject(app: Apprenticeship): (SubjectCode, String) = (app.subject_tier_2_code, app.description)
 }
 
-object ApprenticeshipIndex extends ApprenticeshipIndex(TSVLoader.dataStore)
+object ApprenticeshipIndex extends ApprenticeshipIndex(DataLoader.dataStore)

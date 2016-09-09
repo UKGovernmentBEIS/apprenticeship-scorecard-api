@@ -24,9 +24,9 @@ class ProviderIndex(dataStore: DataStore) extends Index[ProviderWithApprenticesh
 
   def extractSubjects(provider: ProviderWithApprenticeships): (List[SubjectCode], List[String]) = {
     provider.secondary.map { a =>
-      (a.subject_tier_2_code, a.subject_tier_2_title)
+      (a.subject_tier_2_code, a.description)
     }.toList.distinct.unzip
   }
 }
 
-object ProviderIndex extends ProviderIndex(TSVLoader.dataStore)
+object ProviderIndex extends ProviderIndex(DataLoader.dataStore)

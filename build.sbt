@@ -20,9 +20,10 @@ libraryDependencies ++= Seq(
   ws,
   "joda-time" % "joda-time" % "2.7",
   "org.joda" % "joda-convert" % "1.7",
-  "org.typelevel" %% "cats" % "0.6.1",
+  "org.typelevel" %% "cats" % "0.7.0",
   "com.wellfactored" %% "restless" % "0.5.1",
-  "com.wellfactored" %% "play-bindings" % "1.0.0",
+  "com.wellfactored" %% "play-bindings" % "1.1.0",
+  "org.reactivemongo" %% "reactivemongo" % "0.11.14",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % Test
 )
